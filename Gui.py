@@ -32,9 +32,9 @@ def impl_glfw_init(w,h,window_name = "Test title"):
 	return window
 
 class Gui_Window:
-	def __init__(self,w=640,h=480):
+	def __init__(self,w=640,h=480,title="None was given"):
 		imgui.create_context()
-		self.window = impl_glfw_init(w,h)
+		self.window = impl_glfw_init(w,h,title)
 		self.impl = GlfwRenderer(self.window)
 		self.io = imgui.get_io()
 		self.jb = self.io.fonts.add_font_from_file_ttf(path_to_font, 30) if path_to_font is not None else None
