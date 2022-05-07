@@ -240,7 +240,7 @@ class App_window(Gui_Window):
 		imgui.set_column_width(1, imgui.get_window_width() * 0.60)
 		imgui.set_column_width(2, imgui.get_window_width() * 0.20)
 		imgui.next_column()
-		imgui.text(' '*(20-len(self.username)) + 'Welcome ' + self.username + '!' + ' '*(20-len(self.username)))
+		imgui.text(' '*(int(24*imgui.get_window_width()/640-len(self.username)*1.5)) + 'Welcome ' + self.username + '!')
 		imgui.text('')
 		imgui.button('Start questionnaire', imgui.get_window_width() * 0.60, 75)
 		imgui.text('')
