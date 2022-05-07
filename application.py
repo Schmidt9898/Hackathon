@@ -11,7 +11,7 @@ from Data_example import Data_obj # remove this
 class App_window(Gui_Window):
 	
 
-	def __init__(self,w=640,h=480,title="Life is good, but can be better."):
+	def __init__(self,w=1240,h=720,title="Cancer Prevention"):
 		super(App_window, self).__init__(w,h,title)
 		
 		self.tabs=["qa","plot","progresbar","radioweb","anim","Main menu","eval","furtherinfo"]
