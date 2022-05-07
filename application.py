@@ -57,6 +57,14 @@ class App_window(Gui_Window):
 		self.nc=0.001
 		# Radio test
 		self.radio_selected = 0
+		# User's name
+		self.username = ''
+		if os.path.exists('username.txt'):
+			f = open('username.txt')
+			l = f.readline()
+			if l.split():
+				self.username = l[0:-1]
+			f.close()
 		
 
 
@@ -197,11 +205,13 @@ class App_window(Gui_Window):
 		imgui.set_column_width(1, imgui.get_window_width() * 0.60)
 		imgui.set_column_width(2, imgui.get_window_width() * 0.20)
 		imgui.next_column()
-		imgui.text('                  Main menu')
+		imgui.text(' '*(20-len(self.username)) + 'Welcome ' + self.username + '!' + ' '*(20-len(self.username)))
 		imgui.text('')
-		imgui.button('Start questionnaire', imgui.get_window_width() * 0.60)
-		imgui.button('Change basic info', imgui.get_window_width() * 0.60)
-		imgui.button('Quit application', imgui.get_window_width() * 0.60)
+		imgui.button('Start questionnaire', imgui.get_window_width() * 0.60, 75)
+		imgui.text('')
+		imgui.button('Change basic info', imgui.get_window_width() * 0.60, 50)
+		imgui.text('')
+		imgui.button('Quit application', imgui.get_window_width() * 0.60, 50)
 		imgui.next_column()
 
 	def set_style(self):
