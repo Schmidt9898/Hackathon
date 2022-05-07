@@ -103,6 +103,8 @@ def get_questions():
     S5.combochoices = []
     S5.state = 5
     S5.resultID = 'lambda input, diabeticinput: 13 if input >= 4.4 and input <= 6.1 and diabeticinput==37 else 14 if input >= 5.0 and input <= 7.2 and diabeticinput==36 else 15'
+    S5.min = 0
+    S6.max = 100
     questions.append(S5)
 
     S6 = Question()
