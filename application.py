@@ -4,6 +4,7 @@ import imgui
 import matplotlib.pyplot as plt
 from Animated import *
 import webbrowser
+from questions import get_questions
 
 from Data_example import Data_obj # remove this
 
@@ -13,7 +14,7 @@ class App_window(Gui_Window):
 	def __init__(self,w=640,h=480,title="Life is good, but can be better."):
 		super(App_window, self).__init__(w,h,title)
 		
-		self.tabs=["input","plot","progresbar","radioweb","anim","Main menu"]
+		self.tabs=["qa","plot","progresbar","radioweb","anim","Main menu"]
 		#self.cur_tab=self.tabs[0] if len(self.tabs)>0 else None
 		self.cur_tab="Main menu"
 		self.fps=0
@@ -65,6 +66,9 @@ class App_window(Gui_Window):
 			if l.split():
 				self.username = l[0:-1]
 			f.close()
+
+
+		self.quastions=get_questions()
 		
 
 
@@ -102,8 +106,8 @@ class App_window(Gui_Window):
 			imgui.end_menu_bar()
 		
 		
-		if self.cur_tab == "input":
-			self.sceen_test()
+		if self.cur_tab == "qa":
+			self.sceen_qa()
 		elif self.cur_tab == "plot":
 			self.sceen_menu()
 		elif self.cur_tab == "progresbar":
@@ -162,42 +166,57 @@ class App_window(Gui_Window):
 		imgui.text("menu akar lenni")
 		imgui.image(self.plot_text[0], self.plot_text[1], self.plot_text[2])
 
-	def sceen_test(self):
-		if imgui.button("button"):
-			print("megnyomtal")
-		float_val = 0.4
-		changed, float_val = imgui.input_float('Type coefficient:', float_val)
-		#e=1,1
-		#_,e=imgui.input_int2("sad",*e)
-		imgui.text('You wrote: %f' % float_val)
-		int_val = 3
-		changed, int_val = imgui.input_int('Type multiplier:', int_val)
-		imgui.text('You wrote: %i' % int_val)
-		text_val = 'Please, type the coefficient here.'
-		changed, text_val = imgui.input_text(
-		    'Amount:',
-		    text_val,
-		    256
-		)
-		imgui.text('You wrote:')
-		imgui.same_line()
-		imgui.text(text_val)
+	def sceen_qa(self):
 
-		imgui.separator()
+		for q in self.quastions:
+			if q.iscombo:
+				#clicked, current = imgui.combo(q.label, q.value if q.value != None else 0, q.combochoices)
+				#if clicked:
+				#	q.value=current
+				i=0
+				for c in q.combochoices:
+					if imgui.radio_button(c,q.value==i):
+						q.value=i
+					i+=1
 
-		for k,v in self.data.__dict__.items():
-			if type(v) is int:
+
+
+			elif type(q.value) is int:
 				imgui.text("Give me int")
-				changed, int_val = imgui.input_int(k, int_val)
-			if type(v) is float:
+				changed, int_val = imgui.input_int(q.label, q.value,flags=0)
+				if changed:
+					q.value=int_val
+			elif type(q.value) is float:
 				imgui.text("Give me float")
-				changed, float_val = imgui.input_float(k, float_val)
-			if type(v) is str:
+				changed, float_val = imgui.input_float(q.label, q.value)
+				if changed:
+					q.value=float_val
+			elif type(q.value) is str:
 				imgui.text("Give me string")
-				changed, text_val = imgui.input_text(k,text_val,256)
+				changed, text_val = imgui.input_text(q.label,q.value,256)
+				if changed:
+					q.value=text_val
+			elif type(q.value) is tuple:
+				val=val1,val2=q.value
+				changed, val = imgui.input_float2(q.label, *val)
+				if changed:
+					q.value=(val)
+			imgui.separator()
 
-		if imgui.button("ok"):
-			self.data.asd=100
+#
+#		for k,v in self.data.__dict__.items():
+#			if type(v) is int:
+#				imgui.text("Give me int")
+#				changed, int_val = imgui.input_int(k, int_val)
+#			if type(v) is float:
+#				imgui.text("Give me float")
+#				changed, float_val = imgui.input_float(k, float_val)
+#			if type(v) is str:
+#				imgui.text("Give me string")
+#				changed, text_val = imgui.input_text(k,text_val,256)
+#
+#		if imgui.button("ok"):
+#			self.data.asd=100
 
 	def screen_main(self):
 		imgui.columns(3, border=False)
