@@ -13,7 +13,7 @@ class JSONTest():
     hamis = False
     igaz = True
 
-def toJSON(src, fname, mode):
+def toJSON(src, fname, mode='w'):
     contents = jsons.dumps(src)
     fl = open(fname, mode)
     if mode != "r":
@@ -22,7 +22,7 @@ def toJSON(src, fname, mode):
 
 if __name__ == "__main__":
     t = JSONTest()
-    toJSON(t, 'test.json', 'w')
+    toJSON(t, 'test.json')
     fl = open('test.json', 'r')
     print(json.load(fl))
 
