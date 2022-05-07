@@ -3,6 +3,7 @@ from Gui import *
 import imgui
 import matplotlib.pyplot as plt
 from Animated import *
+import webbrowser
 
 from Data_example import Data_obj # remove this
 
@@ -12,7 +13,7 @@ class App_window(Gui_Window):
 	def __init__(self,w=640,h=480,title="Life is good, but can be better."):
 		super(App_window, self).__init__(w,h,title)
 		
-		self.tabs=["test","a","b","c","anim"]
+		self.tabs=["input","plot","progresbar","radioweb","anim"]
 		#self.cur_tab=self.tabs[0] if len(self.tabs)>0 else None
 		self.cur_tab="b"
 		self.fps=0
@@ -53,6 +54,8 @@ class App_window(Gui_Window):
 		self.plot_text= mat_2_tex(img)
 		#####################################
 		self.n=0
+		# Radio test
+		self.radio_selected = 0
 		
 
 
@@ -90,11 +93,11 @@ class App_window(Gui_Window):
 			imgui.end_menu_bar()
 		
 		
-		if self.cur_tab == "test":
+		if self.cur_tab == "input":
 			self.sceen_test()
-		elif self.cur_tab == "a":
+		elif self.cur_tab == "plot":
 			self.sceen_menu()
-		elif self.cur_tab == "b":
+		elif self.cur_tab == "progresbar":
 			showProgresbar(self.n,1000)
 			showProgresbar(self.n,1000)
 			showProgresbar(self.n,1000)
@@ -103,14 +106,17 @@ class App_window(Gui_Window):
 			if self.n > 1 :
 				self.n=0.0
 			self.n+=0.001
-		elif self.cur_tab == "c":
-			imgui.text("tab 3")
+		elif self.cur_tab == "radioweb":
+			self.sceen_radio()
+			self.sceen_url()
 		elif self.cur_tab == "anim":
 			self.anim.draw(self.n)
 			imgui.text("anim")
 			if self.n > 1 :
 				self.n=0.0
 			self.n+=0.001
+		elif self.cur_tab == "d":
+			imgui.text("tab d")
 
 
 
@@ -121,6 +127,26 @@ class App_window(Gui_Window):
 		imgui.end()
 		imgui.pop_font()
 
+	def sceen_url(self):
+		if imgui.button('webbrowser docs'):
+			webbrowser.open("https://docs.python.org/3/library/webbrowser.html")
+		if imgui.button('Lung Cancer Info'):
+			webbrowser.open('https://en.wikipedia.org/wiki/Lung_cancer')
+		if imgui.button('Survivor Stories <3'):
+			webbrowser.open('https://en.wikipedia.org/wiki/Walter_White_(Breaking_Bad)')
+		if imgui.button('Donation'):
+			webbrowser.open('http://www.savewalterwhite.com/')
+	
+	def sceen_radio(self):
+		if imgui.radio_button("Walt", self.radio_selected==0):
+		    self.radio_selected = 0
+		elif imgui.radio_button("Hank", self.radio_selected==1):
+		    self.radio_selected = 1
+		elif imgui.radio_button("Marie", self.radio_selected==2):
+		    self.radio_selected = 2
+		elif imgui.radio_button("Skyler", self.radio_selected==3):
+		    self.radio_selected = 3
+	
 	def sceen_menu(self):
 		imgui.text("menu akar lenni")
 		imgui.image(self.plot_text[0], self.plot_text[1], self.plot_text[2])
