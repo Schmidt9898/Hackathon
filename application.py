@@ -14,7 +14,7 @@ class App_window(Gui_Window):
 	def __init__(self,w=640,h=480,title="Life is good, but can be better."):
 		super(App_window, self).__init__(w,h,title)
 		
-		self.tabs=["qa","plot","progresbar","radioweb","anim","Main menu"]
+		self.tabs=["qa","plot","progresbar","radioweb","anim","Main menu","eval"]
 		#self.cur_tab=self.tabs[0] if len(self.tabs)>0 else None
 		self.cur_tab="Main menu"
 		self.fps=0
@@ -132,6 +132,8 @@ class App_window(Gui_Window):
 			imgui.text("tab d")
 		elif self.cur_tab == "Main menu":
 			self.screen_main()
+		elif self.cur_tab == "eval":
+			self.screen_eval()
 
 
 
@@ -232,6 +234,113 @@ class App_window(Gui_Window):
 		imgui.text('')
 		imgui.button('Quit application', imgui.get_window_width() * 0.60, 50)
 		imgui.next_column()
+
+	def screen_eval(self):
+		# Placeholder resultID list
+		resultID = [True]*39;
+
+		imgui.text('For general guidelines on cancer prevention, see this website.')
+		if imgui.button('cancer.org'):
+			webbrowser.open('https://www.cancer.org/healthy/find-cancer-early/screening-recommendations-by-age.html')
+
+		if resultID[26] or resultID[32]:
+			imgui.text('One of your symptoms may be reason for concern.')
+			imgui.text('Make an appointment with a doctor as soon as possible.')
+			if imgui.button('maps.google.com'):
+				webbrowser.open('https://www.google.com/maps/search/doctor/')
+
+		if resultID[30] or resultID[31]:
+			imgui.text('One of your symptoms is cause for major concern.')
+			imgui.text('Make an appointment with a doctor immediately!')
+			if imgui.button('maps.google.com'):
+				webbrowser.open('https://www.google.com/maps/search/doctor/')
+
+		if resultID[27] or resultID[28]:
+			imgui.text('One of your symptoms indicates the possibility of melanoma.')
+			imgui.text('Make an appointment with a doctor as soon as possible.')
+			if imgui.button('maps.google.com'):
+				webbrowser.open('https://www.google.com/maps/search/doctor/')
+
+		if resultID[29]:
+			imgui.text('A persisting cough may be cause for concern.')
+			imgui.text('If you find it unusual, make an appointment with a doctor.')
+			if imgui.button('maps.google.com'):
+				webbrowser.open('https://www.google.com/maps/search/doctor/')
+
+		if resultID[0]:
+			imgui.text('You should consider putting on some weight! Check out this website for advice.')
+			if imgui.button('nhs.uk'):
+				webbrowser.open('https://www.nhs.uk/live-well/healthy-weight/managing-your-weight/advice-for-underweight-adults/')
+
+		if resultID[2]:
+			imgui.text('Your weight is above optimal. Check out this website for advice.')
+			if imgui.button('nhs.uk'):
+				webbrowser.open('https://www.nhs.uk/conditions/obesity/treatment/')
+
+		if resultID[3] or resultID[4] or resultID[5]:
+			imgui.text('You are considered obese. You should start working on dropping some pounds!')
+			imgui.text('Check out this website for advice.')
+			if imgui.button('nhs.uk'):
+				webbrowser.open('https://www.nhs.uk/conditions/obesity/treatment/')
+
+		if resultID[8]:
+			imgui.text('Moderate consumption of alcohol is linked with increased cancer risk.')
+			imgui.text('See this site for further information.')
+			if imgui.button('cancer.gov'):
+				webbrowser.open('https://www.cancer.gov/about-cancer/causes-prevention/risk/alcohol/alcohol-fact-sheet')
+
+		if resultID[9]:
+			imgui.text('Moderate consumption of alcohol is linked with increased cancer risk.')
+			imgui.text('See this site for further information.')
+			if imgui.button('cancer.gov'):
+				webbrowser.open('https://www.cancer.gov/about-cancer/causes-prevention/risk/alcohol/alcohol-fact-sheet')
+			imgui.text('Additionally, if you feel like you need help regarding alcohol, visit this site.')
+			if imgui.button('nhs.uk'):
+				webbrowser.open('https://www.nhs.uk/conditions/alcohol-misuse/treatment/')
+
+		if resultID[11]:
+			imgui.text('Even low intensity smoking is associated with increased cancer risk.')
+			imgui.text('See this website.')
+			if imgui.button('nhs.uk'):
+				webbrowser.open('https://www.nhs.uk/conditions/lung-cancer/causes/')
+			imgui.text('If you need help to quit smoking, here is another website.')
+			if imgui.button('nhs.uk'):
+				webbrowser.open('https://www.nhs.uk/better-health/quit-smoking/')
+
+		if resultID[11] and resultID[35]:
+			imgui.text('Even low intensity smoking is associated with increased cancer risk.')
+			imgui.text('See this website.')
+			if imgui.button('nhs.uk'):
+				webbrowser.open('https://www.nhs.uk/conditions/lung-cancer/causes/')
+			imgui.text('If you need help to quit smoking, here is another website.')
+			if imgui.button('nhs.uk'):
+				webbrowser.open('https://www.nhs.uk/better-health/quit-smoking/')
+			imgui.text('Beware! According to your or your family\'s medical history,')
+			imgui.text('you are at an increased risk of lung cancer. Smoking does not help!')
+
+		if resultID[15]:
+			imgui.text('Your blood sugar levels are outside optimal parameters.')
+			imgui.text('If this has been going on for a while, make an appointment with a doctor.')
+			if imgui.button('maps.google.com'):
+				webbrowser.open('https://www.google.com/maps/search/doctor/')
+
+		if resultID[17]:
+			imgui.text('Your blood pressure is slightly above optimal.')
+			imgui.text('Consider taking steps to reduce it. Here\'s some advice. ')
+			if imgui.button('nhs.uk'):
+				webbrowser.open('https://www.nhs.uk/conditions/high-blood-pressure-hypertension/prevention/')
+
+		if resultID[18] or resultID[19]:
+			imgui.text('Your blood pressure indicates hypertension.')
+			imgui.text('You should take steps to reduce it. Here\'s some advice.')
+			if imgui.button('nhs.uk'):
+				webbrowser.open('https://www.nhs.uk/conditions/high-blood-pressure-hypertension/prevention/')
+
+		if resultID[38]:
+			imgui.text('You should make an appointment with a doctor for a regular medical checkup.')
+			imgui.text('See this link for doctors nearby.')
+			if imgui.button('maps.google.com'):
+				webbrowser.open('https://www.google.com/maps/search/doctor/')
 
 	def set_style(self):
 		pass
