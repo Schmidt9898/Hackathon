@@ -5,6 +5,7 @@ import os
 from Gui import mat_2_tex
 import unittest
 import cv2 as cv
+import OpenGL.GL as gl
 class Animation():
 	def __init__(self,path):
 		if path is None:
@@ -37,11 +38,13 @@ class Animation():
 			imgui.dummy(w,h)
 		
 
-	def __del__(self):
-		print("TODO DELETE OPENGL TEXTURE")
-		for p in self.sprites:
-			pass
-			
+	#def __del__(self):
+		#print("TODO DELETE OPENGL TEXTURE")
+		#try:
+		#	for p in self.sprites:
+		#		gl.glDeleteTextures(p)
+		#except:
+		#	pass
 			
 
 
