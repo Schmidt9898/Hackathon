@@ -14,15 +14,20 @@ class JSONTest():
     igaz = True
 
 def toJSON(src, fname, mode='w'):
-    contents = jsons.dumps(src)
+    contents = jsons.dumps(src, default=vars)
     fl = open(fname, mode)
     if mode != "r":
         fl.write(contents)
     fl.close()
 
+def fromJSON(fname):
+    fl = open(fname, 'r')
+    contents = json.load(fl)
+    fl.close()
+    return contents
+
 if __name__ == "__main__":
     t = JSONTest()
     toJSON(t, 'test.json')
-    fl = open('test.json', 'r')
-    print(json.load(fl))
+    print(fromJSON('test.json'))
 
