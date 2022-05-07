@@ -67,24 +67,11 @@ if __name__ == "__main__":
 
     questions.append(S4)
 
-    preS5 = Question()
-
-    preS5.label = "Are you a diabetic?"
-    preS5.value = None
-    preS5.tooltip = 'pass'
-    preS5.isdone = 'lambda input: True if input != "Select an item from the list" or not None else False' # preS5.value-t nézze
-    preS5.iscombo = True
-    preS5.combochoices = ["Select an item from the list", "Yes", "No"]
-    preS5.state = -5
-    preS5.resultID = 'lambda input: 36 if input == "Yes" else 37 if input == "No" else ""'
-
-    questions.append(preS5)
-
     S5 = Question()
 
     S5.label = "Blood sugar (mmol/L)"
     S5.value = 0
-    S5.tooltip = 'lambda input, diabeticinput: "Your blood sugar levels are within acceptable parameters" if input >= 4.4 and input <= 6.1 and diabeticinput==37 else "Your blood sugar levels are within acceptable parameters" if input >= 5.0 and input <= 7.2 and diabeticinput==36 else "Both low and high blood sugar levels may indicate different types of cancer. If your levels are frequently outside optimal ranges, consult with a healthcare professional!" '
+    S5.tooltip = 'lambda input: "Your blood sugar levels are within acceptable parameters" if input >= 4.4 and input <= 6.1 else "Both low and high blood sugar levels may indicate different types of cancer. If your levels are frequently outside optimal ranges, consult with a healthcare professional!" '
     S5.isdone = 'lambda input: False if input else True' # S5.value-t nézze
     S5.iscombo = False
     S5.combochoices = []
@@ -110,12 +97,12 @@ if __name__ == "__main__":
 
     S7.label = "How many months ago did you have your last checkup?"
     S7.value = -1
-    S7.tooltip = 'lambda input, hadcancer: "You should plan for your next medical checkup" if (hadcancer==-1 and input > 12) or (hadcancer != -1 and input > 3) else ""'
+    S7.tooltip = 'lambda input: "You should plan for your next medical checkup" if input > 12 else ""'
     S7.isdone = 'lambda input: False if input == -1 else True' # S7.value-t nézze
     S7.iscombo = False
     S7.combochoices = []
     S7.state = 7
-    S7.resultID = 'lambda input, hadcancer: 38 if (hadcancer==-1 and input > 12) or (hadcancer != -1 and input > 3) else 39'
+    S7.resultID = 'lambda input 38 if input > 12 else 39'
 
     questions.append(S7)
 
