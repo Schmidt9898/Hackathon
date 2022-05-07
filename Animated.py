@@ -28,7 +28,7 @@ class Animation():
 
 
 
-	def draw(self,n,w=800,h=800):
+	def draw(self,n,w=200,h=200):
 		n=int(len(self.sprites)*n)
 		n= n if n<len(self.sprites) else len(self.sprites)-1
 		if len(self.sprites)>0:

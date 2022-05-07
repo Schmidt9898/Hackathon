@@ -84,7 +84,7 @@ class App_window(Gui_Window):
 		imgui.push_font(self.new_font)
 		io = imgui.get_io()
 		#print(io.display_size.x)
-		w_flags= imgui.WINDOW_NO_TITLE_BAR | imgui.WINDOW_NO_RESIZE | imgui.WINDOW_NO_MOVE | imgui.WINDOW_MENU_BAR
+		w_flags= imgui.WINDOW_NO_TITLE_BAR | imgui.WINDOW_NO_RESIZE | imgui.WINDOW_NO_MOVE | imgui.WINDOW_MENU_BAR | imgui.WINDOW_NO_BRING_TO_FRONT_ON_FOCUS
 		
 		imgui.set_next_window_position(0,0)
 		imgui.set_next_window_size(io.display_size.x,io.display_size.y)
@@ -116,18 +116,13 @@ class App_window(Gui_Window):
 			showProgresbar(self.n,1000)
 			imgui.text("adsdasd")
 			showProgresbar(self.n,1000)
-			if self.n > 1 :
-				self.n=0.0
-			self.n+=0.001
 		elif self.cur_tab == "radioweb":
 			self.sceen_radio()
 			self.sceen_url()
 		elif self.cur_tab == "anim":
 			self.anim.draw(self.n)
-			imgui.text("anim")
-			self.n+=self.nc
-			if self.n > 1 or self.n<0:
-				self.nc*=-1
+			#imgui.text("anim")
+
 		elif self.cur_tab == "d":
 			imgui.text("tab d")
 		elif self.cur_tab == "Main menu":
@@ -143,6 +138,18 @@ class App_window(Gui_Window):
 		#if imgui.button("nyomj meg",):
 		#	print("most")
 		imgui.end()
+
+
+		self.n+=self.nc
+		if self.n > 1 or self.n<0:
+			self.nc*=-1
+		imgui.set_next_window_position(io.display_size.x,40,pivot_x=1,pivot_y=0)
+		imgui.set_next_window_size(200,200)
+		imgui.begin("anim",flags=imgui.WINDOW_NO_TITLE_BAR | imgui.WINDOW_NO_RESIZE | imgui.WINDOW_NO_MOVE | imgui.WINDOW_NO_SCROLLBAR | imgui.WINDOW_NO_SCROLL_WITH_MOUSE )
+		self.anim.draw(self.n)
+		imgui.end()
+
+
 		imgui.pop_font()
 
 	def sceen_url(self):
