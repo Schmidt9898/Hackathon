@@ -97,17 +97,6 @@ class App_window(Gui_Window):
 		self.bi = questions.BasicInfo()
 		self.resultID = [False]*40;
 		self.evalonce = True
-	
-	def updateResultID(self):
-		if self.evalonce:
-			self.resultID[0] = self.bi.weight/(self.bi.height*self.bi.height) <= 18.5
-			self.resultID[1] = (self.bi.weight/(self.bi.height*self.bi.height) > 18.5) and (self.bi.weight/(self.bi.height*self.bi.height) <= 24.9)
-			self.resultID[2] = (self.bi.weight/(self.bi.height*self.bi.height) > 18.5) and (self.bi.weight/(self.bi.height*self.bi.height) <= 24.9)
-			self.resultID[3] = (self.bi.weight/(self.bi.height*self.bi.height) > 24.9) and (self.bi.weight/(self.bi.height*self.bi.height) <= 29.9)
-			self.resultID[4] = (self.bi.weight/(self.bi.height*self.bi.height) > 29.9) and (self.bi.weight/(self.bi.height*self.bi.height) <= 34.9)
-			self.resultID[5] = self.bi.weight/(self.bi.height*self.bi.height) > 34.9
-			self.resultID[6] = bool(self.bi.history)
-			print(self.resultID)
 
 	def context(self):
 		self.fps+=1
