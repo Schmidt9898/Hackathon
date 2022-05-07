@@ -35,5 +35,8 @@ if __name__ == "__main__":
     print('Írás')
     toJSON(t, 'test.json', 'a')
     print('Olvasás')
-    print(fromJSON('test.json'))
+    results = fromJSON('test.json')
+    for i in range(len(results)):
+        print(str(i) + ': ' + str(results[i]))
+    print(str(len(results)) + ' total')
 
