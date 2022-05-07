@@ -4,7 +4,7 @@ import imgui
 import matplotlib.pyplot as plt
 from Animated import *
 import webbrowser
-from questions import get_questions
+import questions
 
 from Data_example import Data_obj # remove this
 
@@ -68,8 +68,8 @@ class App_window(Gui_Window):
 			f.close()
 
 
-		self.quastions=get_questions()
-		
+		self.questions=questions.get_questions()
+		self.basic_info = questions.BasicInfo()
 
 
 	def context(self):
@@ -167,32 +167,49 @@ class App_window(Gui_Window):
 		imgui.image(self.plot_text[0], self.plot_text[1], self.plot_text[2])
 
 	def sceen_qa(self):
-
-		for q in self.quastions:
-			if q.iscombo:
+		for q in self.questions:
+			imgui.text(q.label)
+			if len(q.combochoices):
 				#clicked, current = imgui.combo(q.label, q.value if q.value != None else 0, q.combochoices)
 				#if clicked:
 				#	q.value=current
-				i=0
+				i = 0
+				imgui.text("Select an item from the list:")
 				for c in q.combochoices:
-					if imgui.radio_button(c,q.value==i):
-						q.value=i
-					i+=1
-
-
-
+					if not q.ischeckbox:
+						if imgui.radio_button(c, q.value == i):
+							q.value = i
+							setattr(self.basic_info, q.target, q.value)
+					else:
+						_, q.value[i] = imgui.checkbox(c, q.value[i])
+						self.basic_info.symptoms[i] = q.value[i]
+						#q.value[i] = not q.value[i]
+						#setattr(self.basic_info, q.target[i], q.value[i])
+					i += 1
 			elif type(q.value) is int:
-				imgui.text("Give me int")
+				#imgui.text("Give me int")
 				changed, int_val = imgui.input_int(q.label, q.value,flags=0)
-				if changed:
-					q.value=int_val
+				if q.value < q.min:
+					q.value = q.min
+					int_val = q.min
+				elif q.value > q.max:
+					q.value = q.max
+					int_val = q.max
+				else:
+					q.value = int_val
 			elif type(q.value) is float:
-				imgui.text("Give me float")
+				#imgui.text("Give me float")
 				changed, float_val = imgui.input_float(q.label, q.value)
-				if changed:
-					q.value=float_val
+				if q.value < q.min:
+					q.value = q.min
+					float_val = q.min
+				elif q.value > q.max:
+					q.value = q.max
+					float_val = q.max
+				else:
+					q.value = float_val
 			elif type(q.value) is str:
-				imgui.text("Give me string")
+				#imgui.text("Give me string")
 				changed, text_val = imgui.input_text(q.label,q.value,256)
 				if changed:
 					q.value=text_val
@@ -203,7 +220,6 @@ class App_window(Gui_Window):
 					q.value=(val)
 			imgui.separator()
 
-#
 #		for k,v in self.data.__dict__.items():
 #			if type(v) is int:
 #				imgui.text("Give me int")
