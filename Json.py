@@ -37,12 +37,14 @@ def toJSON(src, fname, mode='w'):
 	fl.close()
 
 # Soronként egy objektum/dictionary lesz beolvasva egy listába
-def fromJSON(fname):
+def fromJSON(fname,o_type):
 	objects = []
 	fl = open(fname, 'r')
 	for l in fl:
 		if l.strip():
-			objects.append(json.loads(l))
+			temp=o_type()
+			fromDict(temp,json.loads(l))
+			objects.append(temp)
 	fl.close()
 	return objects
 
