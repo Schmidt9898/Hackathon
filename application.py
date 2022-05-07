@@ -1,6 +1,7 @@
 from Gui import * 
 import imgui
 import matplotlib.pyplot as plt
+import webbrowser
 
 from Data_example import Data_obj # remove this
 
@@ -80,7 +81,7 @@ class App_window(Gui_Window):
 		elif self.cur_tab == "a":
 			self.sceen_menu()
 		elif self.cur_tab == "b":
-			imgui.text("tab 2")
+			self.sceen_url()
 		elif self.cur_tab == "c":
 			imgui.text("tab 3")
 		elif self.cur_tab == "d":
@@ -94,6 +95,16 @@ class App_window(Gui_Window):
 		#	print("most")
 		imgui.end()
 		imgui.pop_font()
+
+	def sceen_url(self):
+		if imgui.button('webbrowser docs'):
+			webbrowser.open("https://docs.python.org/3/library/webbrowser.html")
+		if imgui.button('Lung Cancer Info'):
+			webbrowser.open('https://en.wikipedia.org/wiki/Lung_cancer')
+		if imgui.button('Survivor Stories <3'):
+			webbrowser.open('https://en.wikipedia.org/wiki/Walter_White_(Breaking_Bad)')
+		if imgui.button('Donation'):
+			webbrowser.open('http://www.savewalterwhite.com/')
 
 	def sceen_menu(self):
 		imgui.text("menu akar lenni")
