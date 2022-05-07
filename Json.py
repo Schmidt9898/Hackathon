@@ -6,23 +6,51 @@ import json
 import jsons
 
 class JSONTest():
-    egesz = 5
-    lebego = 3.1
-    szoveg = "proba"
-    lista = ["1", 2, 3.0]
-    hamis = False
-    igaz = True
+	egesz = 5
+	lebego = 3.1
+	szoveg = "proba"
+	lista = ["1", 2, 3.0]
+	hamis = False
+	igaz = True
 
 def toJSON(src, fname, mode):
-    contents = jsons.dumps(src)
-    fl = open(fname, mode)
-    if mode != "r":
-        fl.write(contents)
-    fl.close()
+	contents = jsons.dumps(src)
+	fl = open(fname, mode)
+	if mode != "r":
+		fl.write(contents)
+	fl.close()
 
 if __name__ == "__main__":
-    t = JSONTest()
-    toJSON(t, 'test.json', 'w')
-    fl = open('test.json', 'r')
-    print(json.load(fl))
+	t = JSONTest()
+	toJSON(t, 'test.json', 'w')
+	fl = open('test.json', 'r')
+	print(json.load(fl))
+
+
+
+
+import unittest
+import os
+class Test_get_coin_methods(unittest.TestCase):
+	def test_json_write(self):
+		obj=JSONTest()
+		toJSON([obj], "test.json", "w")
+		self.assertTrue(os.path.exists("test.json"))
+	def test_json_read(self):
+		obj=JSONTest()
+		toJSON([obj], "test.json", "w")
+		self.assertTrue(os.path.exists("test.json"))
+		objs=fromJSON("test.json")
+		for o2 in objs:
+			for k,v in o2.__dict__.items():
+				self.assertEqual(getattr(obj, k),v)
+	
+
+if __name__ == "__main__":
+	unittest.main()
+
+
+
+
+
 
