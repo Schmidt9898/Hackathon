@@ -207,9 +207,11 @@ class App_window(Gui_Window):
 		imgui.next_column()
 		imgui.text(' '*(20-len(self.username)) + 'Welcome ' + self.username + '!' + ' '*(20-len(self.username)))
 		imgui.text('')
-		imgui.button('Start questionnaire', imgui.get_window_width() * 0.60)
-		imgui.button('Change basic info', imgui.get_window_width() * 0.60)
-		imgui.button('Quit application', imgui.get_window_width() * 0.60)
+		imgui.button('Start questionnaire', imgui.get_window_width() * 0.60, 75)
+		imgui.text('')
+		imgui.button('Change basic info', imgui.get_window_width() * 0.60, 50)
+		imgui.text('')
+		imgui.button('Quit application', imgui.get_window_width() * 0.60, 50)
 		imgui.next_column()
 
 	def set_style(self):
