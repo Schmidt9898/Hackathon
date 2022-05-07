@@ -279,7 +279,7 @@ class App_window(Gui_Window):
 		imgui.set_column_width(1, imgui.get_window_width() * 0.60)
 		imgui.set_column_width(2, imgui.get_window_width() * 0.20)
 		imgui.next_column()
-		imgui.text(' '*(int(24*imgui.get_window_width()/640-len(self.username)*1.5)) + 'Welcome ' + self.username + '!')
+		imgui.text(' '*(int(25*imgui.get_window_width()/640-len(self.username)*1.3)) + 'Welcome ' + self.username + '!')
 		imgui.text('')
 		imgui.button('Start questionnaire', imgui.get_window_width() * 0.60, 75)
 		imgui.text('')
@@ -308,6 +308,11 @@ class App_window(Gui_Window):
 			self.resultID[13] = (self.bi.diabetic == 0) and (self.bi.bloodsugar >= 4.4) and (self.bi.bloodsugar <= 6.1)
 			self.resultID[14] = (self.bi.diabetic == 1) and (self.bi.bloodsugar >= 5.0) and (self.bi.bloodsugar <= 7.2)
 			self.resultID[15] = not self.resultID[13] and not self.resultID[14]
+			self.resultID[16] = (self.bi.bloodpressure[0] < 120.0) and (self.bi.bloodpressure[1] < 80.0)
+			self.resultID[17] = (self.bi.bloodpressure[0] >= 120.0) and (self.bi.bloodpressure[0] < 130.0) and (self.bi.bloodpressure[1] < 80.0)
+			self.resultID[18] = ((self.bi.bloodpressure[0] >= 130.0) and (self.bi.bloodpressure[0] < 140.0)) or ((self.bi.bloodpressure[1] >= 80.0) and (self.bi.bloodpressure[1] < 90.0))
+			self.resultID[19] = (self.bi.bloodpressure[0] >= 140.0) or (self.bi.bloodpressure[1] >= 90.0)
+			self.resultID[20] = (self.bi.bloodpressure[0] >= 180.0) or (self.bi.bloodpressure[1] >= 120.0)
 			self.resultID[21] = False
 			self.resultID[22] = False
 			self.resultID[23] = (self.bi.age >= 50) and (self.bi.checkup >= 12)
@@ -396,7 +401,7 @@ class App_window(Gui_Window):
 			if imgui.button('nhs.uk##2'):
 				webbrowser.open('https://www.nhs.uk/conditions/alcohol-misuse/treatment/')
 
-		if self.resultID[11]:
+		if (self.resultID[10] or self.resultID[11]) and not self.resultID[35]:
 			imgui.text('\nEven low intensity smoking is associated with increased cancer risk.')
 			imgui.text('See this website.')
 			if imgui.button('nhs.uk##3'):
@@ -405,7 +410,7 @@ class App_window(Gui_Window):
 			if imgui.button('nhs.uk##4'):
 				webbrowser.open('https://www.nhs.uk/better-health/quit-smoking/')
 
-		if self.resultID[11] and self.resultID[35]:
+		if (self.resultID[10] or self.resultID[11]) and self.resultID[35]:
 			imgui.text('\nEven low intensity smoking is associated with increased cancer risk.')
 			imgui.text('See this website.')
 			if imgui.button('nhs.uk##5'):
@@ -428,11 +433,23 @@ class App_window(Gui_Window):
 			if imgui.button('nhs.uk##7'):
 				webbrowser.open('https://www.nhs.uk/conditions/high-blood-pressure-hypertension/prevention/')
 
-		if self.resultID[18] or self.resultID[19]:
-			imgui.text('\nYour blood pressure indicates hypertension.')
+		if self.resultID[18]:
+			imgui.text('\nYour blood pressure indicates stage one hypertension.')
 			imgui.text('You should take steps to reduce it. Here\'s some advice.')
 			if imgui.button('nhs.uk##8'):
 				webbrowser.open('https://www.nhs.uk/conditions/high-blood-pressure-hypertension/prevention/')
+
+		if self.resultID[19] and not self.resultID[20]:
+			imgui.text('\nYour blood pressure indicates stage two hypertension.')
+			imgui.text('You should urgently take steps to reduce it! Here\'s some advice.')
+			if imgui.button('nhs.uk##8'):
+				webbrowser.open('https://www.nhs.uk/conditions/high-blood-pressure-hypertension/prevention/')
+
+		if self.resultID[20]:
+			imgui.text('\nYour blood pressure indicates critical blood pressure!')
+			imgui.text('Consult a healthcare professional immediately!.')
+			if imgui.button('nhs.uk##8'):
+				webbrowser.open('https://www.google.com/maps/search/doctor/')
 
 		if self.resultID[38]:
 			imgui.text('\nYou should make an appointment with a doctor for a regular medical checkup.')

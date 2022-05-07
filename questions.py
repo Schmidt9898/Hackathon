@@ -11,6 +11,7 @@ class Question():
 		self.target = '' # Target attribute set to value TODO ignored for checkboxes
 		self.min = 0
 		self.max = 0
+		self.boomer = True
 
 class BasicInfo():
 	def __init__(self):
@@ -131,6 +132,7 @@ def get_questions():
     S5.target = 'bloodsugar'
     S5.min = 2.0
     S5.max = 10.0
+    S5.boomer = False
     questions.append(S5)
 
     S6 = Question()
@@ -145,6 +147,7 @@ def get_questions():
     S6.target = 'bloodpressure'
     S6.min = 0
     S6.max = 200
+    S5.boomer = False
     questions.append(S6)
 
     S7 = Question()
@@ -159,6 +162,7 @@ def get_questions():
     S7.target = 'checkup'
     S7.min = 0
     S7.max = 300
+    S5.boomer = False
     questions.append(S7)
 
     S8 = Question()
