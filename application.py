@@ -20,8 +20,11 @@ class App_window(Gui_Window):
 		self.fps=0
 		self.fps_time=0
 		self.data=Data_obj()
-
-
+		#icon=cv.imread("./icon.png")
+		#print(icon.shape)
+		#icon=(icon.data,icon.shape[0],icon.shape[1])
+		#glfw.set_window_icon(self.window,1,icon)
+		
 
 		io = imgui.get_io()												 #font
 		self.new_font = io.fonts.add_font_from_file_ttf("./DroidSans.ttf", 30,)
