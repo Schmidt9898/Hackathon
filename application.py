@@ -1,5 +1,5 @@
 import time
-from Gui import * 
+from Gui import *
 import imgui
 import matplotlib.pyplot as plt
 from Animated import *
@@ -34,22 +34,40 @@ class App_window(Gui_Window):
 		#testing plot
 		########################################################
 		fig = plt.figure()
-		x1 = np.linspace(0.0, 5.0)
-		x2 = np.linspace(0.0, 2.0)
+		# x1 = np.linspace(0.0, 5.0)
+		# x2 = np.linspace(0.0, 2.0)
+		#
+		# y1 = np.cos(2 * np.pi * x1) * np.exp(-x1)
+		# y2 = np.cos(2 * np.pi * x2)
+		#
+		# ax = fig.add_subplot(2,1,1)
+		# line1, = ax.plot(x1, y1, 'ko-')        # so that we can update data later
+		# ax.set_title('A tale of 2 subplots')
+		# ax.set_ylabel('Damped oscillation')
+		#
+		# ay = fig.add_subplot(2, 1, 2)
+		# ay.plot(x2, y2, 'r.-')
+		# ay.set_xlabel('time (s)')
+		# ay.set_ylabel('Undamped')
+		y1 = 24.2 + 0.5 * np.random.rand(180, 1)
+		y2 = 4.5 + 0.2 * np.random.rand(180, 1)
 
-		y1 = np.cos(2 * np.pi * x1) * np.exp(-x1) 
-		y2 = np.cos(2 * np.pi * x2)
+		x = [i + 1 for i in range(180)]
+		ax1 = fig.add_subplot(3, 1, 1)
+		ax1.plot(x, y1, 'ro-')
+		ax1.set_title('Body Mass Index change over time')
+		ax1.set_ylabel('BMI')
+		ax1.set_xlabel('days')
 
-		ax = fig.add_subplot(2,1,1)
-		line1, = ax.plot(x1, y1, 'ko-')        # so that we can update data later
-		ax.set_title('A tale of 2 subplots')
-		ax.set_ylabel('Damped oscillation')
+		ax2 = fig.add_subplot(3, 1, 3)
+		ax2.plot(x, y2, 'bo-')
+		ax2.set_title('Blood sugar level change over time')
+		ax2.set_ylabel('BSL (mmol/L)')
+		ax2.set_xlabel('days')
 
-		ay = fig.add_subplot(2, 1, 2)
-		ay.plot(x2, y2, 'r.-')
-		ay.set_xlabel('time (s)')
-		ay.set_ylabel('Undamped')
 		img = fig_2_mat(fig)
+
+
 		#cv.imshow("asd",img)
 		#plt.show()
 		self.plot_text= mat_2_tex(img)
