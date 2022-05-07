@@ -1,5 +1,6 @@
 from Gui import * 
 import imgui
+import matplotlib.pyplot as plt
 
 from Data_example import Data_obj # remove this
 
@@ -16,11 +17,35 @@ class App_window(Gui_Window):
 
 
 
-		io = imgui.get_io()
-		self.new_font = io.fonts.add_font_from_file_ttf(
-		    "./DroidSans.ttf", 30,
-		)
+		io = imgui.get_io()												 #font
+		self.new_font = io.fonts.add_font_from_file_ttf("./DroidSans.ttf", 30,)
 		self.impl.refresh_font_texture()
+
+
+		#testing plot
+		########################################################
+		fig = plt.figure()
+		x1 = np.linspace(0.0, 5.0)
+		x2 = np.linspace(0.0, 2.0)
+
+		y1 = np.cos(2 * np.pi * x1) * np.exp(-x1) 
+		y2 = np.cos(2 * np.pi * x2)
+
+		ax = fig.add_subplot(2,1,1)
+		line1, = ax.plot(x1, y1, 'ko-')        # so that we can update data later
+		ax.set_title('A tale of 2 subplots')
+		ax.set_ylabel('Damped oscillation')
+
+		ay = fig.add_subplot(2, 1, 2)
+		ay.plot(x2, y2, 'r.-')
+		ay.set_xlabel('time (s)')
+		ay.set_ylabel('Undamped')
+		img = fig_2_mat(fig)
+		#cv.imshow("asd",img)
+		#plt.show()
+		self.plot_text= mat_2_tex(img)
+		#####################################
+		
 		
 
 
@@ -72,6 +97,7 @@ class App_window(Gui_Window):
 
 	def sceen_menu(self):
 		imgui.text("menu akar lenni")
+		imgui.image(self.plot_text[0], self.plot_text[1], self.plot_text[2])
 
 	def sceen_test(self):
 		imgui.button("button")

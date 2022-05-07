@@ -4,6 +4,7 @@ import OpenGL.GL as gl
 import imgui
 from imgui.integrations.glfw import GlfwRenderer
 import cv2 as cv
+import numpy as np
 
 path_to_font = None  # "path/to/font.ttf"
 
@@ -53,7 +54,7 @@ class Gui_Window:
 			self.impl.process_inputs()
 			imgui.new_frame()
 
-			gl.glClearColor(0.1, 0.1, 0.1, 1)
+			gl.glClearColor(1, 1, 1, 1)
 			gl.glClear(gl.GL_COLOR_BUFFER_BIT)
 
 			if self.jb is not None:
@@ -83,6 +84,10 @@ def mat_2_tex(mat,texture=None):
 	return texture, w, h
 	#do not forget to delete the textures
 
+
+def fig_2_mat(fig):
+	fig.canvas.draw()
+	return cv.cvtColor(np.asarray(fig.canvas.buffer_rgba()), cv.COLOR_RGBA2BGR)
 
 
 if __name__ == "__main__":
