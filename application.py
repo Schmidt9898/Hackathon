@@ -14,7 +14,7 @@ class App_window(Gui_Window):
 	def __init__(self,w=640,h=480,title="Life is good, but can be better."):
 		super(App_window, self).__init__(w,h,title)
 		
-		self.tabs=["qa","plot","progresbar","radioweb","anim","Main menu","eval","furtherinfo"]
+		self.tabs=["qa","plot","progresbar","radioweb","anim","Main menu","eval","furtherinfo","calendar"]
 		#self.cur_tab=self.tabs[0] if len(self.tabs)>0 else None
 		self.cur_tab="Main menu"
 		self.fps=0
@@ -149,6 +149,8 @@ class App_window(Gui_Window):
 			self.screen_eval()
 		elif self.cur_tab == "furtherinfo":
 			self.screen_furtherinfo()
+		elif self.cur_tab == "calendar":
+			self.screen_calendar()
 
 
 
@@ -398,6 +400,32 @@ class App_window(Gui_Window):
 		imgui.text('prognostic factor for cancer patients, regardless of age')
 		if imgui.button('PubMed##1'):
 			webbrowser.open('https://pubmed.ncbi.nlm.nih.gov/22898746/')
+
+	def screen_calendar(self):
+		imgui.selectable('2022', True, 0, 1100, 50)
+		imgui.selectable('February', True, 0, 1100, 50)
+		imgui.selectable('Monday', False, 0, 150, 75)
+		imgui.same_line()
+		imgui.selectable('Tuesday', False, 0, 150, 75)
+		imgui.same_line()
+		imgui.selectable('Wednesday', False, 0, 150, 75)
+		imgui.same_line()
+		imgui.selectable('Thursday', False, 0, 150, 75)
+		imgui.same_line()
+		imgui.selectable('Friday', False, 0, 150, 75)
+		imgui.same_line()
+		imgui.selectable('Saturday', False, 0, 150, 75)
+		imgui.same_line()
+		imgui.selectable('Sunday', False, 0, 150, 75)
+
+		for i in range(29):
+			if i:
+				imgui.selectable(str(i), False, 0, 150, 100)
+			else:
+				imgui.selectable('', False, 0, 150, 100)
+			imgui.same_line()
+			if (i+1) % 7 == 0:
+				imgui.new_line()
 
 	def set_style(self):
 		pass
