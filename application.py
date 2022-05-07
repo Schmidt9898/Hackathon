@@ -15,8 +15,17 @@ class App_window(Gui_Window):
 		self.data=Data_obj()
 
 
-	def context(self):
+
+		io = imgui.get_io()
+		self.new_font = io.fonts.add_font_from_file_ttf(
+		    "./DroidSans.ttf", 30,
+		)
+		self.impl.refresh_font_texture()
 		
+
+
+	def context(self):
+		imgui.push_font(self.new_font)
 		io = imgui.get_io()
 		#print(io.display_size.x)
 		w_flags= imgui.WINDOW_NO_TITLE_BAR | imgui.WINDOW_NO_RESIZE | imgui.WINDOW_NO_MOVE | imgui.WINDOW_MENU_BAR
@@ -59,6 +68,7 @@ class App_window(Gui_Window):
 		#if imgui.button("nyomj meg",):
 		#	print("most")
 		imgui.end()
+		imgui.pop_font()
 
 	def sceen_menu(self):
 		imgui.text("menu akar lenni")
