@@ -73,7 +73,7 @@ class App_window(Gui_Window):
 		self.plot_text= mat_2_tex(img)
 		#####################################
 		self.n=0
-		self.nc=0.001
+		self.nc=0.05
 		# Radio test
 		self.radio_selected = 0
 		# User's name
@@ -87,8 +87,9 @@ class App_window(Gui_Window):
 
 
 		self.questions=questions.get_questions()
-		self.basic_info = questions.BasicInfo()
-
+		self.bi = questions.BasicInfo()
+		self.resultID = [False]*40;
+		self.evalonce = True
 
 	def context(self):
 		self.fps+=1
@@ -96,7 +97,8 @@ class App_window(Gui_Window):
 			print(self.fps)
 			self.fps_time=time.time()+1
 			self.fps=0.0
-
+		if self.cur_tab != "eval":
+			self.evalonce = True
 
 
 		imgui.push_font(self.new_font)
@@ -146,6 +148,8 @@ class App_window(Gui_Window):
 		elif self.cur_tab == "Main menu":
 			self.screen_main()
 		elif self.cur_tab == "eval":
+			self.updateResultID()
+			self.evalonce = False
 			self.screen_eval()
 		elif self.cur_tab == "furtherinfo":
 			self.screen_furtherinfo()
@@ -204,17 +208,18 @@ class App_window(Gui_Window):
 				#if clicked:
 				#	q.value=current
 				i = 0
-				imgui.text("Select an item from the list:")
 				for c in q.combochoices:
 					if not q.ischeckbox:
 						if imgui.radio_button(c, q.value == i):
 							q.value = i
-							setattr(self.basic_info, q.target, q.value)
+							setattr(self.bi, q.target, q.value)
 					else:
 						_, q.value[i] = imgui.checkbox(c, q.value[i])
-						self.basic_info.symptoms[i] = q.value[i]
-						#q.value[i] = not q.value[i]
-						#setattr(self.basic_info, q.target[i], q.value[i])
+						# TODO
+						if q.target == 'symptoms':
+							self.bi.symptoms[i] = q.value[i]
+						elif q.target == 'history':
+							self.bi.history[i] = q.value[i]
 					i += 1
 			elif type(q.value) is int:
 				#imgui.text("Give me int")
@@ -227,6 +232,7 @@ class App_window(Gui_Window):
 					int_val = q.max
 				else:
 					q.value = int_val
+				setattr(self.bi, q.target, q.value)
 			elif type(q.value) is float:
 				#imgui.text("Give me float")
 				changed, float_val = imgui.input_float(q.label, q.value)
@@ -238,16 +244,19 @@ class App_window(Gui_Window):
 					float_val = q.max
 				else:
 					q.value = float_val
+				setattr(self.bi, q.target, q.value)
 			elif type(q.value) is str:
 				#imgui.text("Give me string")
 				changed, text_val = imgui.input_text(q.label,q.value,256)
 				if changed:
 					q.value=text_val
 			elif type(q.value) is tuple:
+				# TODO hogy lehet ezt min-maxolni?
 				val=val1,val2=q.value
 				changed, val = imgui.input_float2(q.label, *val)
 				if changed:
 					q.value=(val)
+				setattr(self.bi, q.target, q.value)
 			imgui.separator()
 
 #		for k,v in self.data.__dict__.items():
@@ -270,7 +279,7 @@ class App_window(Gui_Window):
 		imgui.set_column_width(1, imgui.get_window_width() * 0.60)
 		imgui.set_column_width(2, imgui.get_window_width() * 0.20)
 		imgui.next_column()
-		imgui.text(' '*(int(24*imgui.get_window_width()/640-len(self.username)*1.5)) + 'Welcome ' + self.username + '!')
+		imgui.text(' '*(int(25*imgui.get_window_width()/640-len(self.username)*1.3)) + 'Welcome ' + self.username + '!')
 		imgui.text('')
 		imgui.button('Start questionnaire', imgui.get_window_width() * 0.60, 75)
 		imgui.text('')
@@ -279,62 +288,111 @@ class App_window(Gui_Window):
 		if imgui.button('Quit application', imgui.get_window_width() * 0.60, 50):
 			quit()
 		imgui.next_column()
-
+	
+	
+	def updateResultID(self):
+		if self.evalonce:
+			self.resultID[0] = self.bi.weight/(self.bi.height*self.bi.height)*10000 <= 18.5
+			self.resultID[1] = (self.bi.weight/(self.bi.height*self.bi.height)*10000 > 18.5) and (self.bi.weight/(self.bi.height*self.bi.height)*10000 <= 24.9)
+			self.resultID[2] = (self.bi.weight/(self.bi.height*self.bi.height)*10000 > 24.9) and (self.bi.weight/(self.bi.height*self.bi.height)*10000 <= 29.9)
+			self.resultID[3] = (self.bi.weight/(self.bi.height*self.bi.height)*10000 > 29.9) and (self.bi.weight/(self.bi.height*self.bi.height)*10000 <= 34.9)
+			self.resultID[4] = (self.bi.weight/(self.bi.height*self.bi.height)*10000 > 34.9) and (self.bi.weight/(self.bi.height*self.bi.height)*10000 <= 39.9)
+			self.resultID[5] = self.bi.weight/(self.bi.height*self.bi.height)*10000 > 39.9
+			self.resultID[6] = True in self.bi.history
+			self.resultID[7] = self.bi.alcohol == 0
+			self.resultID[8] = self.bi.alcohol == 1
+			self.resultID[9] = self.bi.alcohol == 2
+			self.resultID[10] = self.bi.smoking == 0
+			self.resultID[11] = self.bi.smoking == 1
+			self.resultID[12] = self.bi.smoking == 2
+			self.resultID[13] = (self.bi.diabetic == 0) and (self.bi.bloodsugar >= 4.4) and (self.bi.bloodsugar <= 6.1)
+			self.resultID[14] = (self.bi.diabetic == 1) and (self.bi.bloodsugar >= 5.0) and (self.bi.bloodsugar <= 7.2)
+			self.resultID[15] = not self.resultID[13] and not self.resultID[14]
+			self.resultID[16] = (self.bi.bloodpressure[0] < 120.0) and (self.bi.bloodpressure[1] < 80.0)
+			self.resultID[17] = (self.bi.bloodpressure[0] >= 120.0) and (self.bi.bloodpressure[0] < 130.0) and (self.bi.bloodpressure[1] < 80.0)
+			self.resultID[18] = ((self.bi.bloodpressure[0] >= 130.0) and (self.bi.bloodpressure[0] < 140.0)) or ((self.bi.bloodpressure[1] >= 80.0) and (self.bi.bloodpressure[1] < 90.0))
+			self.resultID[19] = (self.bi.bloodpressure[0] >= 140.0) or (self.bi.bloodpressure[1] >= 90.0)
+			self.resultID[20] = (self.bi.bloodpressure[0] >= 180.0) or (self.bi.bloodpressure[1] >= 120.0)
+			self.resultID[21] = False
+			self.resultID[22] = False
+			self.resultID[23] = (self.bi.age >= 50) and (self.bi.checkup >= 12)
+			self.resultID[24] = (self.bi.age < 50) and (self.bi.checkup >= 36)
+			self.resultID[25] = (True in self.bi.history) and (self.bi.checkup >= 12)
+			self.resultID[26] = self.bi.symptoms[0]
+			self.resultID[27] = self.bi.symptoms[1]
+			self.resultID[28] = self.bi.symptoms[2]
+			self.resultID[29] = self.bi.symptoms[3]
+			self.resultID[30] = self.bi.symptoms[4]
+			self.resultID[31] = self.bi.symptoms[5]
+			self.resultID[32] = self.bi.symptoms[6]
+			self.resultID[33] = self.bi.history[0]
+			self.resultID[34] = self.bi.history[1]
+			self.resultID[35] = self.bi.history[2]
+			self.resultID[36] = self.bi.diabetic == 0
+			self.resultID[37] = self.bi.diabetic == 1
+			self.resultID[38] = self.resultID[21] or self.resultID[22] or self.resultID[23] or self.resultID[24] or self.resultID[25]
+			self.resultID[39] = not self.resultID[39]
+			for i in vars(self.bi):
+				print("'"+i+"': " + str(getattr(self.bi, i)))
+			for i in range(len(self.resultID)):
+				print(str(i)+": " + str(self.resultID[i]))
+	
 	def screen_eval(self):
-		# Placeholder resultID list
-		resultID = [True]*39;
-
 		imgui.text('For general guidelines on cancer prevention, see this website.')
 		if imgui.button('cancer.org'):
 			webbrowser.open('https://www.cancer.org/healthy/find-cancer-early/screening-recommendations-by-age.html')
 
-		if resultID[26] or resultID[32]:
-			imgui.text('\nOne of your symptoms may be reason for concern.')
+		# Fatigue
+		if self.resultID[26] or self.resultID[32]:
+			imgui.text('\nOne of your symptoms (fatigue) may be reason for concern.')
 			imgui.text('Make an appointment with a doctor as soon as possible.')
 			if imgui.button('maps.google.com'):
 				webbrowser.open('https://www.google.com/maps/search/doctor/')
 
-		if resultID[30] or resultID[31]:
-			imgui.text('\nOne of your symptoms is cause for major concern.')
+		# Bleeding
+		if self.resultID[30] or self.resultID[31]:
+			imgui.text('\nOne of your symptoms (bleeding) is cause for major concern.')
 			imgui.text('Make an appointment with a doctor immediately!')
 			if imgui.button('maps.google.com##'):
 				webbrowser.open('https://www.google.com/maps/search/doctor/')
 
-		if resultID[27] or resultID[28]:
-			imgui.text('\nOne of your symptoms indicates the possibility of melanoma.')
+		# Skin disease
+		if self.resultID[27] or self.resultID[28]:
+			imgui.text('\nOne of your symptoms (skin disease) indicates the possibility of melanoma.')
 			imgui.text('Make an appointment with a doctor as soon as possible.')
 			if imgui.button('maps.google.com##1'):
 				webbrowser.open('https://www.google.com/maps/search/doctor/')
 
-		if resultID[29]:
+		# Cough
+		if self.resultID[29]:
 			imgui.text('\nA persisting cough may be cause for concern.')
 			imgui.text('If you find it unusual, make an appointment with a doctor.')
 			if imgui.button('maps.google.com##2'):
 				webbrowser.open('https://www.google.com/maps/search/doctor/')
 
-		if resultID[0]:
+		if self.resultID[0]:
 			imgui.text('\nYou should consider putting on some weight! Check out this website for advice.')
 			if imgui.button('nhs.uk'):
 				webbrowser.open('https://www.nhs.uk/live-well/healthy-weight/managing-your-weight/advice-for-underweight-adults/')
 
-		if resultID[2]:
+		if self.resultID[2]:
 			imgui.text('\nYour weight is above optimal. Check out this website for advice.')
 			if imgui.button('nhs.uk##'):
 				webbrowser.open('https://www.nhs.uk/conditions/obesity/treatment/')
 
-		if resultID[3] or resultID[4] or resultID[5]:
+		if self.resultID[3] or self.resultID[4] or self.resultID[5]:
 			imgui.text('\nYou are considered obese. You should start working on dropping some pounds!')
 			imgui.text('Check out this website for advice.')
 			if imgui.button('nhs.uk##1'):
 				webbrowser.open('https://www.nhs.uk/conditions/obesity/treatment/')
 
-		if resultID[8]:
+		if self.resultID[8]:
 			imgui.text('\nModerate consumption of alcohol is linked with increased cancer risk.')
 			imgui.text('See this site for further information.')
 			if imgui.button('cancer.gov##'):
 				webbrowser.open('https://www.cancer.gov/about-cancer/causes-prevention/risk/alcohol/alcohol-fact-sheet')
 
-		if resultID[9]:
+		if self.resultID[9]:
 			imgui.text('\nModerate consumption of alcohol is linked with increased cancer risk.')
 			imgui.text('See this site for further information.')
 			if imgui.button('cancer.gov##1'):
@@ -343,7 +401,7 @@ class App_window(Gui_Window):
 			if imgui.button('nhs.uk##2'):
 				webbrowser.open('https://www.nhs.uk/conditions/alcohol-misuse/treatment/')
 
-		if resultID[11]:
+		if (self.resultID[10] or self.resultID[11]) and not self.resultID[35]:
 			imgui.text('\nEven low intensity smoking is associated with increased cancer risk.')
 			imgui.text('See this website.')
 			if imgui.button('nhs.uk##3'):
@@ -352,7 +410,7 @@ class App_window(Gui_Window):
 			if imgui.button('nhs.uk##4'):
 				webbrowser.open('https://www.nhs.uk/better-health/quit-smoking/')
 
-		if resultID[11] and resultID[35]:
+		if (self.resultID[10] or self.resultID[11]) and self.resultID[35]:
 			imgui.text('\nEven low intensity smoking is associated with increased cancer risk.')
 			imgui.text('See this website.')
 			if imgui.button('nhs.uk##5'):
@@ -363,25 +421,37 @@ class App_window(Gui_Window):
 			imgui.text('Beware! According to your or your family\'s medical history,')
 			imgui.text('you are at an increased risk of lung cancer. Smoking does not help!')
 
-		if resultID[15]:
+		if self.resultID[15]:
 			imgui.text('\nYour blood sugar levels are outside optimal parameters.')
 			imgui.text('If this has been going on for a while, make an appointment with a doctor.')
 			if imgui.button('maps.google.com##3'):
 				webbrowser.open('https://www.google.com/maps/search/doctor/')
 
-		if resultID[17]:
+		if self.resultID[17]:
 			imgui.text('\nYour blood pressure is slightly above optimal.')
 			imgui.text('Consider taking steps to reduce it. Here\'s some advice. ')
 			if imgui.button('nhs.uk##7'):
 				webbrowser.open('https://www.nhs.uk/conditions/high-blood-pressure-hypertension/prevention/')
 
-		if resultID[18] or resultID[19]:
-			imgui.text('\nYour blood pressure indicates hypertension.')
+		if self.resultID[18]:
+			imgui.text('\nYour blood pressure indicates stage one hypertension.')
 			imgui.text('You should take steps to reduce it. Here\'s some advice.')
 			if imgui.button('nhs.uk##8'):
 				webbrowser.open('https://www.nhs.uk/conditions/high-blood-pressure-hypertension/prevention/')
 
-		if resultID[38]:
+		if self.resultID[19] and not self.resultID[20]:
+			imgui.text('\nYour blood pressure indicates stage two hypertension.')
+			imgui.text('You should urgently take steps to reduce it! Here\'s some advice.')
+			if imgui.button('nhs.uk##8'):
+				webbrowser.open('https://www.nhs.uk/conditions/high-blood-pressure-hypertension/prevention/')
+
+		if self.resultID[20]:
+			imgui.text('\nYour blood pressure indicates critical blood pressure!')
+			imgui.text('Consult a healthcare professional immediately!.')
+			if imgui.button('nhs.uk##8'):
+				webbrowser.open('https://www.google.com/maps/search/doctor/')
+
+		if self.resultID[38]:
 			imgui.text('\nYou should make an appointment with a doctor for a regular medical checkup.')
 			imgui.text('See this link for doctors nearby.')
 			if imgui.button('maps.google.com##4'):
