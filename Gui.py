@@ -77,6 +77,7 @@ def mat_2_tex(mat,texture=None):
 	#cv.imshow("mat_2_tex",mat)
 	if texture is None:
 		texture = gl.glGenTextures(1)
+	gl.glPixelStorei(gl.GL_UNPACK_ALIGNMENT, 1);
 	gl.glBindTexture(gl.GL_TEXTURE_2D, texture)
 	gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_LINEAR)
 	gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_LINEAR)
