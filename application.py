@@ -176,7 +176,7 @@ class App_window(Gui_Window):
 				q.value=q.value if q.value != None else 0
 				i=0
 				for c in q.combochoices:
-					if imgui.radio_button(c,q.value==i):
+					if imgui.radio_button(c+"##"+q.label,q.value==i):
 						q.value=i
 					i+=1
 
