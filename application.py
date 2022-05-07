@@ -14,7 +14,7 @@ class App_window(Gui_Window):
 	def __init__(self,w=1240,h=720,title="Cancer Prevention"):
 		super(App_window, self).__init__(w,h,title)
 		
-		self.tabs=["qa","plot","progresbar","radioweb","anim","Main menu","eval","furtherinfo","calendar"]
+		self.tabs=["Main menu","Calendar","History","Interesting and helpful facts"]
 		#self.cur_tab=self.tabs[0] if len(self.tabs)>0 else None
 		self.cur_tab="Main menu"
 		self.fps=0
@@ -131,7 +131,7 @@ class App_window(Gui_Window):
 		
 		if self.cur_tab == "qa":
 			self.sceen_qa()
-		elif self.cur_tab == "plot":
+		elif self.cur_tab == "History":
 			self.sceen_menu()
 		elif self.cur_tab == "progresbar":
 			showProgresbar(self.n,1000)
@@ -154,7 +154,7 @@ class App_window(Gui_Window):
 			self.updateResultID()
 			self.evalonce = False
 			self.screen_eval()
-		elif self.cur_tab == "furtherinfo":
+		elif self.cur_tab == "Interesting and helpful facts":
 			self.screen_furtherinfo()
 		elif self.cur_tab == "calendar":
 			self.screen_calendar()
@@ -200,7 +200,7 @@ class App_window(Gui_Window):
 		    self.radio_selected = 3
 	
 	def sceen_menu(self):
-		imgui.text("menu akar lenni")
+		imgui.text("Visualized history of past evaluations")
 		imgui.image(self.plot_text[0], self.plot_text[1], self.plot_text[2])
 
 	def sceen_qa(self):
@@ -284,9 +284,13 @@ class App_window(Gui_Window):
 		imgui.next_column()
 		imgui.text(' '*(int(25*imgui.get_window_width()/640-len(self.username)*1.3)) + 'Welcome ' + self.username + '!')
 		imgui.text('')
-		imgui.button('Start questionnaire', imgui.get_window_width() * 0.60, 75)
+		if imgui.button('Start questionnaire', imgui.get_window_width() * 0.60, 75):
+			self.cur_tab = "qa"
+			self.sceen_qa()
 		imgui.text('')
-		imgui.button('Change basic info', imgui.get_window_width() * 0.60, 50)
+		if imgui.button('Check evaluation', imgui.get_window_width() * 0.60, 50):
+			self.cur_tab = "eval"
+			self.screen_eval()
 		imgui.text('')
 		if imgui.button('Quit application', imgui.get_window_width() * 0.60, 50):
 			quit()
