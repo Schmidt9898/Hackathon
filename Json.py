@@ -183,6 +183,8 @@ class Test_get_coin_methods(unittest.TestCase):
 		self.assertFalse(os.path.exists('test.json'))
 
 	def test_json_readfile(self):
+		if not os.path.exists('test_cancer.json'):
+			return
 		result = fromJSON('test_cancer.json')
 		self.assertEqual(len(result), 5)
 
@@ -195,7 +197,7 @@ class Test_get_coin_methods(unittest.TestCase):
 				self.women = False
 				self.fun = ''
 			
-			def urgency():
+			def urgency(self):
 				return self.lethality * self.occurance
 
 		for i in range(5):
@@ -203,19 +205,24 @@ class Test_get_coin_methods(unittest.TestCase):
 			fromDict(obj, result[i])
 			if i == 0:
 			    self.assertEqual(obj.cname, 'Tüdő')
-			    self.assertEqual(obj.fun(), 0)
+			    self.assertEqual(obj.fun(i), 0)
+			    self.assertEqual(obj.urgency(), 0.9 * 0.01)
 			if i == 1:
 			    self.assertEqual(obj.lethality, 0.6)
-			    self.assertEqual(obj.fun(), 1)
+			    self.assertEqual(obj.fun(i), 1)
+			    self.assertEqual(obj.urgency(), 0.012)
 			if i == 2:
 			    self.assertEqual(obj.occurance, 0.001)
-			    self.assertEqual(obj.fun(), 2)
+			    self.assertEqual(obj.fun(i), 8)
+			    self.assertEqual(obj.urgency(), 0.00099)
 			if i == 3:
 			    self.assertEqual(obj.men, True)
-			    self.assertEqual(obj.fun(), 3)
+			    self.assertEqual(obj.fun(i), 81)
+			    self.assertEqual(obj.urgency(), 0.004)
 			if i == 4:
 			    self.assertEqual(obj.women, True)
-			    self.assertEqual(obj.fun(), 4)
+			    self.assertEqual(obj.fun(i), 1024)
+			    self.assertEqual(obj.urgency(), 0.015)
 
 # Tesztelés
 if __name__ == "__main__":
