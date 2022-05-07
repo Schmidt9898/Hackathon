@@ -15,6 +15,7 @@ class Question():
 
 class BasicInfo():
 	def __init__(self):
+		self.uname = ''
 		self.gender = 0
 		self.age = 18
 		self.height = 180.0
@@ -24,12 +25,20 @@ class BasicInfo():
 		self.smoking = 0
 		self.diabetic = 0
 		self.bloodsugar = 4.5
-		self.bloodpressure = (100, 60)
+		self.bloodpressure = (100.0, 60,0)
 		self.checkup = 0
 		self.symptoms = [False, False, False, False, False, False, False]
 
 def get_questions():
     questions = []
+
+    SN = Question()
+    SN.label = "Name"
+    SN.value = ""
+    SN.tooltip = 'lambda : "hm"'
+    SN.resultID = 'lambda : ""'
+    SN.target = 'uname'
+    questions.append(SN)
 
     SO = Question()
     SO.label = "Gender"
@@ -115,7 +124,7 @@ def get_questions():
     S5a.label = "Are you diabetic?"
     S5a.value = 0
     S5a.tooltip = 'lambda : "hm"'
-    S5a.combochoices = ["Yes", "No"]
+    S5a.combochoices = ["No", "Yes"]
     S5a.resultID = 'lambda : ""'
     S5a.target = 'diabetic'
     questions.append(S5a)
