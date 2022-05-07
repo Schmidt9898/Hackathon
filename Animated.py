@@ -38,11 +38,13 @@ class Animation():
 			imgui.dummy(w,h)
 		
 
-	def __del__(self):
-		print("TODO DELETE OPENGL TEXTURE")
-		for p in self.sprites:
-			gl.glDeleteTextures(1,p)
-			
+	#def __del__(self):
+		#print("TODO DELETE OPENGL TEXTURE")
+		#try:
+		#	for p in self.sprites:
+		#		gl.glDeleteTextures(p)
+		#except:
+		#	pass
 			
 
 
