@@ -56,6 +56,11 @@ def fromDict(target, d):
 			else:
 				setattr(target, k, d[k])
 
+def findLambdas(target):
+	for v in vars(target):
+		if isinstance(getattr(target, v), str) and getattr(target, v).startswith('lambda'):
+			setattr(target, v, eval(getattr(target, v)))
+
 class Test_get_coin_methods(unittest.TestCase):
 	def test_json_writesingle(self):
 		obj = JSONTest()
@@ -137,8 +142,9 @@ class Test_get_coin_methods(unittest.TestCase):
 		for o in result:
 			#for k,v in o.__dict__.items():
 			for k,v in o.items():
-				self.assertEqual(getattr(obj_old, k), v)
-				self.assertEqual(getattr(obj_new, k), v)
+				if k != 'la' and k != 'mb':
+					self.assertEqual(getattr(obj_old, k), v)
+					self.assertEqual(getattr(obj_new, k), v)
 		os.remove('test.json')
 		self.assertFalse(os.path.exists('test.json'))
 
@@ -153,21 +159,24 @@ class Test_get_coin_methods(unittest.TestCase):
 			self.assertEqual(getattr(obj_old, k), v)
 		
 		obj_new = JSONTest()
+		findLambdas(obj_old)
 		fromDict(obj_new, result[0])
-		print(vars(obj_old))
-		print(vars(obj_new))
 		for i in range(5):
-			print(obj_new.da(i))
 			if i == 0:
 				self.assertEqual(obj_new.da(i), 10)
+				self.assertEqual(obj_new.da(i), obj_old.da(i))
 			if i == 1:
 				self.assertEqual(obj_new.da(i), 11)
+				self.assertEqual(obj_new.da(i), obj_old.da(i))
 			if i == 2:
 				self.assertEqual(obj_new.da(i), 12)
+				self.assertEqual(obj_new.da(i), obj_old.da(i))
 			if i == 3:
 				self.assertEqual(obj_new.da(i), 31)
+				self.assertEqual(obj_new.da(i), obj_old.da(i))
 			if i == 4:
 				self.assertEqual(obj_new.da(i), 14)
+				self.assertEqual(obj_new.da(i), obj_old.da(i))
 
 		os.remove('test.json')
 		self.assertFalse(os.path.exists('test.json'))
