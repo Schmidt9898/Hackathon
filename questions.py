@@ -30,7 +30,7 @@ if __name__ == "__main__":
 
     S2 = Question()
 
-    S2.label = "Have you had any of these cancers in the past?"
+    S2.label = "Have you or any of your family members had any of these cancers in the past?"
     S2.value = None
     S2.tooltip = 'lambda input: "Be sure to have a medical checkup frequently!" if input is not "None" else "Good to hear!"'
     S2.isdone = 'lambda input: True if input is not "Select an item from the list" or not None else False' # S2.value-t nézze
@@ -134,4 +134,10 @@ if __name__ == "__main__":
 
     from Json import*
     toJSON(questions,"questions.json")
+
+    q = [x.resultID for x in questions]
+    results = [False]*39
+
+    for i in range(len(q)):
+        results[q[i]] = True
 
