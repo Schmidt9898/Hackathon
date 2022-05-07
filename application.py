@@ -1,6 +1,8 @@
+import time
 from Gui import * 
 import imgui
 import matplotlib.pyplot as plt
+from Animated import *
 
 from Data_example import Data_obj # remove this
 
@@ -10,9 +12,11 @@ class App_window(Gui_Window):
 	def __init__(self,w=640,h=480,title="Life is good, but can be better."):
 		super(App_window, self).__init__(w,h,title)
 		
-		self.tabs=["test","a","b","c","d"]
-		self.cur_tab=self.tabs[0] if len(self.tabs)>0 else None
+		self.tabs=["test","a","b","c","anim"]
+		#self.cur_tab=self.tabs[0] if len(self.tabs)>0 else None
+		self.cur_tab="b"
 		self.fps=0
+		self.fps_time=0
 		self.data=Data_obj()
 
 
@@ -20,6 +24,9 @@ class App_window(Gui_Window):
 		io = imgui.get_io()												 #font
 		self.new_font = io.fonts.add_font_from_file_ttf("./DroidSans.ttf", 30,)
 		self.impl.refresh_font_texture()
+
+
+		self.anim=Animation("./anim0")
 
 
 		#testing plot
@@ -45,11 +52,19 @@ class App_window(Gui_Window):
 		#plt.show()
 		self.plot_text= mat_2_tex(img)
 		#####################################
-		
+		self.n=0
 		
 
 
 	def context(self):
+		self.fps+=1
+		if self.fps_time<time.time():
+			print(self.fps)
+			self.fps_time=time.time()+1
+			self.fps=0.0
+
+
+
 		imgui.push_font(self.new_font)
 		io = imgui.get_io()
 		#print(io.display_size.x)
@@ -80,11 +95,22 @@ class App_window(Gui_Window):
 		elif self.cur_tab == "a":
 			self.sceen_menu()
 		elif self.cur_tab == "b":
-			imgui.text("tab 2")
+			showProgresbar(self.n,1000)
+			showProgresbar(self.n,1000)
+			showProgresbar(self.n,1000)
+			imgui.text("adsdasd")
+			showProgresbar(self.n,1000)
+			if self.n > 1 :
+				self.n=0.0
+			self.n+=0.001
 		elif self.cur_tab == "c":
 			imgui.text("tab 3")
-		elif self.cur_tab == "d":
-			imgui.text("tab d")
+		elif self.cur_tab == "anim":
+			self.anim.draw(self.n)
+			imgui.text("anim")
+			if self.n > 1 :
+				self.n=0.0
+			self.n+=0.001
 
 
 
