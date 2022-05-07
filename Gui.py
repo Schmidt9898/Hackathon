@@ -11,7 +11,6 @@ path_to_font = None  # "path/to/font.ttf"
 
 def impl_glfw_init(w,h,window_name = "Test title"):
 	width, height = w, h
-	#window_name = "Tic Tac yeeee"
 
 	if not glfw.init():
 		print("Could not initialize OpenGL context")
@@ -24,6 +23,8 @@ def impl_glfw_init(w,h,window_name = "Test title"):
 
 	window = glfw.create_window(int(width), int(height), window_name, None, None)
 	glfw.make_context_current(window)
+	glfw.swap_interval(1)
+	#glfw.glfwSwapInterval( 0 );
 
 	if not window:
 		glfw.terminate()

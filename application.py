@@ -73,7 +73,7 @@ class App_window(Gui_Window):
 		self.plot_text= mat_2_tex(img)
 		#####################################
 		self.n=0
-		self.nc=0.05
+		self.nc=0.025
 		# Radio test
 		self.radio_selected = 0
 		# User's name
