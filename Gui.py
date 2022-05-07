@@ -59,7 +59,9 @@ class Gui_Window:
 
 			if self.jb is not None:
 				imgui.push_font(self.jb)
+			self.set_style()
 			self.context()
+			self.pop_style()
 			if self.jb is not None:
 				imgui.pop_font()
 
@@ -71,6 +73,11 @@ class Gui_Window:
 		while not glfw.window_should_close(self.window):
 			self.render_frame()
 
+	def set_style(self):
+		pass
+	def pop_style(self):
+		pass
+
 # load image to vram texture
 def mat_2_tex(mat,texture=None):
 	h,w,_=mat.shape
@@ -81,7 +88,10 @@ def mat_2_tex(mat,texture=None):
 	gl.glBindTexture(gl.GL_TEXTURE_2D, texture)
 	gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_LINEAR)
 	gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_LINEAR)
-	gl.glTexImage2D(gl.GL_TEXTURE_2D, 0, gl.GL_RGBA, w, h, 0, gl.GL_BGR,gl.GL_UNSIGNED_BYTE, mat)
+	if mat.shape[-1] == 4:
+		gl.glTexImage2D(gl.GL_TEXTURE_2D, 0, gl.GL_RGBA, w, h, 0, gl.GL_BGRA,gl.GL_UNSIGNED_BYTE, mat)
+	else:
+		gl.glTexImage2D(gl.GL_TEXTURE_2D, 0, gl.GL_RGBA, w, h, 0, gl.GL_BGR,gl.GL_UNSIGNED_BYTE, mat)
 	return texture, w, h
 	#do not forget to delete the textures
 

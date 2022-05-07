@@ -15,17 +15,20 @@ class Animation():
 		
 
 		images=[]
-		for p in os.listdir(path):
-			p=os.path.join(path,p)
-			if not os.path.isdir(p):
-				print(p)
-				im=cv.imread(p)
-				self.sprites.append(mat_2_tex(im))
-				#cv.imshow("asd",im)
+		pn=len(os.listdir(path))
+		for i in range(pn):
+			p=os.path.join(path,str(i+1)+".png")
+			#if not os.path.isdir(p):
+			print(p)
+			im=cv.imread(p,flags=cv.IMREAD_UNCHANGED)
+			#im=im[800:800+1250,683:680+1250]
+			#cv.imshow("asd",im)
+			#cv.imwrite(p.__str__(),im)
+			self.sprites.append(mat_2_tex(im))
 
 
 
-	def draw(self,n,w=100,h=100):
+	def draw(self,n,w=800,h=800):
 		n=int(len(self.sprites)*n)
 		n= n if n<len(self.sprites) else len(self.sprites)-1
 		if len(self.sprites)>0:
@@ -59,4 +62,5 @@ def showProgresbar(n,sx=200,sy=20):
 
 if __name__ == "__main__":
 	print("No main for this one")
+	a=Animation("./anim0")
 	

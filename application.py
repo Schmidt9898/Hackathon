@@ -54,6 +54,7 @@ class App_window(Gui_Window):
 		self.plot_text= mat_2_tex(img)
 		#####################################
 		self.n=0
+		self.nc=0.001
 		# Radio test
 		self.radio_selected = 0
 		
@@ -112,9 +113,9 @@ class App_window(Gui_Window):
 		elif self.cur_tab == "anim":
 			self.anim.draw(self.n)
 			imgui.text("anim")
-			if self.n > 1 :
-				self.n=0.0
-			self.n+=0.001
+			self.n+=self.nc
+			if self.n > 1 or self.n<0:
+				self.nc*=-1
 		elif self.cur_tab == "d":
 			imgui.text("tab d")
 
@@ -152,9 +153,12 @@ class App_window(Gui_Window):
 		imgui.image(self.plot_text[0], self.plot_text[1], self.plot_text[2])
 
 	def sceen_test(self):
-		imgui.button("button")
+		if imgui.button("button"):
+			print("megnyomtal")
 		float_val = 0.4
 		changed, float_val = imgui.input_float('Type coefficient:', float_val)
+		#e=1,1
+		#_,e=imgui.input_int2("sad",*e)
 		imgui.text('You wrote: %f' % float_val)
 		int_val = 3
 		changed, int_val = imgui.input_int('Type multiplier:', int_val)
@@ -185,7 +189,21 @@ class App_window(Gui_Window):
 		if imgui.button("ok"):
 			self.data.asd=100
 
-
+	def set_style(self):
+		pass
+		#rgb(232, 249, 253) 0.9098039215686274, 0.9764705882352941, 0.9921568627450981
+		#rgb(121, 218, 232) 0.4745098039215686, 0.8549019607843137, 0.9098039215686274
+		#rgb(10, 161, 221)  0.4745098039215686, 0.8549019607843137, 0.9098039215686274
+		#rgb(33, 85, 205) 0.12941176470588237, 0.3333333333333333, 0.803921568627451
+		imgui.push_style_color(imgui.COLOR_TEXT, 0, 0.0, 0.0)
+		imgui.push_style_color(imgui.COLOR_WINDOW_BACKGROUND, 0.4745098039215686, 0.8549019607843137, 0.9098039215686274)
+		imgui.push_style_color(imgui.COLOR_MENUBAR_BACKGROUND , 0.12941176470588237, 0.3333333333333333, 0.803921568627451)
+		imgui.push_style_color(imgui.COLOR_FRAME_BACKGROUND , 0.9098039215686274, 0.9764705882352941, 0.9921568627450981)
+		imgui.push_style_color(imgui.COLOR_BUTTON, 0.12941176470588237, 0.3333333333333333, 0.803921568627451)
+		imgui.push_style_color(imgui.COLOR_BUTTON_HOVERED,0.4745098039215686, 0.8549019607843137, 0.9098039215686274)
+	def pop_style(self):
+		pass
+		imgui.pop_style_color(6)
 
 
 
