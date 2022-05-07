@@ -41,6 +41,7 @@ def fromJSON(fname):
 	objects = []
 	fl = open(fname, 'r')
 	for l in fl:
+		# TODO: üres sor kezelése
 		content = json.loads(l)
 		objects.append(content)
 	fl.close()
@@ -180,6 +181,41 @@ class Test_get_coin_methods(unittest.TestCase):
 
 		os.remove('test.json')
 		self.assertFalse(os.path.exists('test.json'))
+
+	def test_json_readfile(self):
+		result = fromJSON('test_cancer.json')
+		self.assertEqual(len(result), 5)
+
+		class CancerTest():
+			def __init__(self):
+				self.cname = ''
+				self.lethality = 0.0
+				self.occurance = 0.0
+				self.men = False
+				self.women = False
+				self.fun = ''
+			
+			def urgency():
+				return self.lethality * self.occurance
+
+		for i in range(5):
+			obj = CancerTest()
+			fromDict(obj, result[i])
+			if i == 0:
+			    self.assertEqual(obj.cname, 'Tüdő')
+			    self.assertEqual(obj.fun(), 0)
+			if i == 1:
+			    self.assertEqual(obj.lethality, 0.6)
+			    self.assertEqual(obj.fun(), 1)
+			if i == 2:
+			    self.assertEqual(obj.occurance, 0.001)
+			    self.assertEqual(obj.fun(), 2)
+			if i == 3:
+			    self.assertEqual(obj.men, True)
+			    self.assertEqual(obj.fun(), 3)
+			if i == 4:
+			    self.assertEqual(obj.women, True)
+			    self.assertEqual(obj.fun(), 4)
 
 # Tesztelés
 if __name__ == "__main__":
