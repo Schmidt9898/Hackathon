@@ -1,23 +1,30 @@
-# 
-# data = {"src": self.id, "dest": dest,"msg":obj}
-# json_dump = json.dumps(data)
-# msg = json.loads(msg)
 import json
-import jsons
+# jsons valószínűleg nem szükséges már, amúgy jsons.dumps működik bárhol
+#import jsons
+import unittest
+import os
 
 class JSONTest():
-	egesz = 5
-	lebego = 3.1
-	szoveg = "proba"
-	lista = ["1", 2, 3.0]
-	hamis = False
-	igaz = True
+    def __init__(self, egesz=5, lebego=3.1, szoveg='foo', lista=['1', 2, 3.1], hamis=False, igaz=True):
+        self.egesz = egesz
+        self.lebego = lebego
+        self.szoveg = szoveg
+        self.lista = lista
+        self.hamis = hamis
+        self.igaz = igaz
 
+# Bementeknek egy objektumokból álló listát vár
+# Ezt majd soronként kiírja, minden elemet egy külön sorba rakva
 def toJSON(src, fname, mode='w'):
-    contents = jsons.dumps(src, default=vars)
     fl = open(fname, mode)
+    if isinstance(src, list):
+        content = ''
+        for o in src:
+            content += json.dumps(o, default=vars)+'\n'
+    else:
+        content = json.dumps(src, default=vars)+'\n'
     if mode != "r":
-        fl.write(contents + '\n')
+        fl.write(content)
     fl.close()
 
 # Soronként egy objektum/dictionary
@@ -30,45 +37,58 @@ def fromJSON(fname):
     fl.close()
     return objects
 
-if __name__ == "__main__":
-	t = JSONTest()
-	toJSON(t, 'test.json', 'w')
-	fl = open('test.json', 'r')
-	print(json.load(fl))
-
-
-
-
-import unittest
-import os
 class Test_get_coin_methods(unittest.TestCase):
-	def test_json_write(self):
-		obj=JSONTest()
-		toJSON([obj], "test.json", "w")
-		self.assertTrue(os.path.exists("test.json"))
-	def test_json_read(self):
-		obj=JSONTest()
-		toJSON([obj], "test.json", "w")
-		self.assertTrue(os.path.exists("test.json"))
-		objs=fromJSON("test.json")
-		for o2 in objs:
-			for k,v in o2.__dict__.items():
-				self.assertEqual(getattr(obj, k),v)
-	
+    def test_json_writesingle(self):
+        obj = JSONTest()
+        toJSON(obj, 'test.json', 'w')
+        self.assertTrue(os.path.exists("test.json"))
 
+    def test_json_writelist(self):
+        obj = JSONTest()
+        toJSON([obj], 'test.json', 'w')
+        self.assertTrue(os.path.exists("test.json"))
+
+    def test_json_readonce(self):
+        obj = JSONTest()
+        toJSON([obj, obj], 'test.json', 'w')
+        self.assertTrue(os.path.exists("test.json"))
+        result = fromJSON("test.json")
+        for o in result:
+            #for k,v in o.__dict__.items():
+            for k,v in o.items():
+                self.assertEqual(getattr(obj, k), v)
+
+    def test_json_readappend(self):
+        obj = JSONTest()
+        fl = open('test.json', 'w')
+        fl.close()
+        toJSON(obj, 'test.json', 'a')
+        self.assertTrue(os.path.exists("test.json"))
+        toJSON([obj], 'test.json', 'a')
+        self.assertTrue(os.path.exists("test.json"))
+        toJSON([obj, obj], 'test.json', 'a')
+        self.assertTrue(os.path.exists("test.json"))
+
+        result = fromJSON("test.json")
+        for o in result:
+            #for k,v in o.__dict__.items():
+            for k,v in o.items():
+                self.assertEqual(getattr(obj, k), v)
+
+    def test_json_readmultiple(self):
+        obj1 = JSONTest()
+        obj2 = JSONTest(4, 2.2, 'bar', ['n', 4, 5.6], True, False)
+        toJSON([obj1, obj2], 'test.json', 'w')
+        self.assertTrue(os.path.exists("test.json"))
+
+        result = fromJSON("test.json")
+        self.assertEqual(len(result), 2)
+        for k,v in result[0].items():
+            self.assertEqual(getattr(obj1, k), v)
+        for k,v in result[1].items():
+            self.assertEqual(getattr(obj2, k), v)
+
+# Tesztelés
 if __name__ == "__main__":
-	unittest.main()
-
-
-
-
-
-    t = JSONTest()
-    print('Írás')
-    toJSON(t, 'test.json', 'a')
-    print('Olvasás')
-    results = fromJSON('test.json')
-    for i in range(len(results)):
-        print(str(i) + ': ' + str(results[i]))
-    print(str(len(results)) + ' total')
+    unittest.main()
 
