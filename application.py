@@ -46,7 +46,8 @@ class App_window(Gui_Window):
 		#plt.show()
 		self.plot_text= mat_2_tex(img)
 		#####################################
-		
+		# Radio test
+		self.radio_selected = 0
 		
 
 
@@ -83,7 +84,7 @@ class App_window(Gui_Window):
 		elif self.cur_tab == "b":
 			self.sceen_url()
 		elif self.cur_tab == "c":
-			imgui.text("tab 3")
+			self.sceen_radio()
 		elif self.cur_tab == "d":
 			imgui.text("tab d")
 
@@ -105,7 +106,17 @@ class App_window(Gui_Window):
 			webbrowser.open('https://en.wikipedia.org/wiki/Walter_White_(Breaking_Bad)')
 		if imgui.button('Donation'):
 			webbrowser.open('http://www.savewalterwhite.com/')
-
+	
+	def sceen_radio(self):
+		if imgui.radio_button("Walt", self.radio_selected==0):
+		    self.radio_selected = 0
+		elif imgui.radio_button("Hank", self.radio_selected==1):
+		    self.radio_selected = 1
+		elif imgui.radio_button("Marie", self.radio_selected==2):
+		    self.radio_selected = 2
+		elif imgui.radio_button("Skyler", self.radio_selected==3):
+		    self.radio_selected = 3
+	
 	def sceen_menu(self):
 		imgui.text("menu akar lenni")
 		imgui.image(self.plot_text[0], self.plot_text[1], self.plot_text[2])
