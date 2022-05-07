@@ -41,9 +41,8 @@ def fromJSON(fname):
 	objects = []
 	fl = open(fname, 'r')
 	for l in fl:
-		# TODO: üres sor kezelése
-		content = json.loads(l)
-		objects.append(content)
+		if l.strip():
+			objects.append(json.loads(l))
 	fl.close()
 	return objects
 
