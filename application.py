@@ -14,7 +14,7 @@ class App_window(Gui_Window):
 	def __init__(self,w=640,h=480,title="Life is good, but can be better."):
 		super(App_window, self).__init__(w,h,title)
 		
-		self.tabs=["qa","plot","progresbar","radioweb","anim","Main menu","eval"]
+		self.tabs=["qa","plot","progresbar","radioweb","anim","Main menu","eval","furtherinfo"]
 		#self.cur_tab=self.tabs[0] if len(self.tabs)>0 else None
 		self.cur_tab="Main menu"
 		self.fps=0
@@ -134,7 +134,8 @@ class App_window(Gui_Window):
 			self.screen_main()
 		elif self.cur_tab == "eval":
 			self.screen_eval()
-
+		elif self.cur_tab == "furtherinfo":
+			self.screen_furtherinfo()
 
 
 
@@ -358,6 +359,20 @@ class App_window(Gui_Window):
 			imgui.text('See this link for doctors nearby.')
 			if imgui.button('maps.google.com##4'):
 				webbrowser.open('https://www.google.com/maps/search/doctor/')
+
+	def screen_furtherinfo(self):
+		imgui.text('Did you know?\n')
+		imgui.text('\n\"Low contents of omega-3 PUFAs in the mammary region')
+		imgui.text('seem to contribute to breast cancer multifocality,')
+		imgui.text('indicating that omega-3 PUFA supplementation')
+		imgui.text('is important for cancer management and prevention\"')
+		if imgui.button('PubMed'):
+			webbrowser.open('https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6566772/')
+
+		imgui.text('\nLow lean body mass acts as a poor')
+		imgui.text('prognostic factor for cancer patients, regardless of age')
+		if imgui.button('PubMed##1'):
+			webbrowser.open('https://pubmed.ncbi.nlm.nih.gov/22898746/')
 
 	def set_style(self):
 		pass
