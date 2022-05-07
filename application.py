@@ -70,19 +70,8 @@ class App_window(Gui_Window):
 
 		self.questions=questions.get_questions()
 		self.bi = questions.BasicInfo()
-		self.resultID = [False]*39;
+		self.resultID = [False]*40;
 		self.evalonce = True
-	
-	def updateResultID(self):
-		if self.evalonce:
-			self.resultID[0] = self.bi.weight/(self.bi.height*self.bi.height) <= 18.5
-			self.resultID[1] = (self.bi.weight/(self.bi.height*self.bi.height) > 18.5) and (self.bi.weight/(self.bi.height*self.bi.height) <= 24.9)
-			self.resultID[2] = (self.bi.weight/(self.bi.height*self.bi.height) > 18.5) and (self.bi.weight/(self.bi.height*self.bi.height) <= 24.9)
-			self.resultID[3] = (self.bi.weight/(self.bi.height*self.bi.height) > 24.9) and (self.bi.weight/(self.bi.height*self.bi.height) <= 29.9)
-			self.resultID[4] = (self.bi.weight/(self.bi.height*self.bi.height) > 29.9) and (self.bi.weight/(self.bi.height*self.bi.height) <= 34.9)
-			self.resultID[5] = self.bi.weight/(self.bi.height*self.bi.height) > 34.9
-			self.resultID[6] = bool(self.bi.history)
-			print(self.resultID)
 
 	def context(self):
 		self.fps+=1
@@ -199,7 +188,6 @@ class App_window(Gui_Window):
 				#if clicked:
 				#	q.value=current
 				i = 0
-				imgui.text("Select an item from the list:")
 				for c in q.combochoices:
 					if not q.ischeckbox:
 						if imgui.radio_button(c, q.value == i):
@@ -207,7 +195,11 @@ class App_window(Gui_Window):
 							setattr(self.bi, q.target, q.value)
 					else:
 						_, q.value[i] = imgui.checkbox(c, q.value[i])
-						self.bi.symptoms[i] = q.value[i]
+						# TODO
+						if q.target == 'symptoms':
+							self.bi.symptoms[i] = q.value[i]
+						elif q.target == 'history':
+							self.bi.history[i] = q.value[i]
 					i += 1
 			elif type(q.value) is int:
 				#imgui.text("Give me int")
@@ -220,6 +212,7 @@ class App_window(Gui_Window):
 					int_val = q.max
 				else:
 					q.value = int_val
+				setattr(self.bi, q.target, q.value)
 			elif type(q.value) is float:
 				#imgui.text("Give me float")
 				changed, float_val = imgui.input_float(q.label, q.value)
@@ -231,16 +224,19 @@ class App_window(Gui_Window):
 					float_val = q.max
 				else:
 					q.value = float_val
+				setattr(self.bi, q.target, q.value)
 			elif type(q.value) is str:
 				#imgui.text("Give me string")
 				changed, text_val = imgui.input_text(q.label,q.value,256)
 				if changed:
 					q.value=text_val
 			elif type(q.value) is tuple:
+				# TODO hogy lehet ezt min-maxolni?
 				val=val1,val2=q.value
 				changed, val = imgui.input_float2(q.label, *val)
 				if changed:
 					q.value=(val)
+				setattr(self.bi, q.target, q.value)
 			imgui.separator()
 
 #		for k,v in self.data.__dict__.items():
@@ -272,6 +268,49 @@ class App_window(Gui_Window):
 		if imgui.button('Quit application', imgui.get_window_width() * 0.60, 50):
 			quit()
 		imgui.next_column()
+	
+	
+	def updateResultID(self):
+		if self.evalonce:
+			self.resultID[0] = self.bi.weight/(self.bi.height*self.bi.height)*10000 <= 18.5
+			self.resultID[1] = (self.bi.weight/(self.bi.height*self.bi.height)*10000 > 18.5) and (self.bi.weight/(self.bi.height*self.bi.height)*10000 <= 24.9)
+			self.resultID[2] = (self.bi.weight/(self.bi.height*self.bi.height)*10000 > 24.9) and (self.bi.weight/(self.bi.height*self.bi.height)*10000 <= 29.9)
+			self.resultID[3] = (self.bi.weight/(self.bi.height*self.bi.height)*10000 > 29.9) and (self.bi.weight/(self.bi.height*self.bi.height)*10000 <= 34.9)
+			self.resultID[4] = (self.bi.weight/(self.bi.height*self.bi.height)*10000 > 34.9) and (self.bi.weight/(self.bi.height*self.bi.height)*10000 <= 39.9)
+			self.resultID[5] = self.bi.weight/(self.bi.height*self.bi.height)*10000 > 39.9
+			self.resultID[6] = True in self.bi.history
+			self.resultID[7] = self.bi.alcohol == 0
+			self.resultID[8] = self.bi.alcohol == 1
+			self.resultID[9] = self.bi.alcohol == 2
+			self.resultID[10] = self.bi.smoking == 0
+			self.resultID[11] = self.bi.smoking == 1
+			self.resultID[12] = self.bi.smoking == 2
+			self.resultID[13] = (self.bi.diabetic == 0) and (self.bi.bloodsugar >= 4.4) and (self.bi.bloodsugar <= 6.1)
+			self.resultID[14] = (self.bi.diabetic == 1) and (self.bi.bloodsugar >= 5.0) and (self.bi.bloodsugar <= 7.2)
+			self.resultID[15] = not self.resultID[13] and not self.resultID[14]
+			self.resultID[21] = False
+			self.resultID[22] = False
+			self.resultID[23] = (self.bi.age >= 50) and (self.bi.checkup >= 12)
+			self.resultID[24] = (self.bi.age < 50) and (self.bi.checkup >= 36)
+			self.resultID[25] = (True in self.bi.history) and (self.bi.checkup >= 12)
+			self.resultID[26] = self.bi.symptoms[0]
+			self.resultID[27] = self.bi.symptoms[1]
+			self.resultID[28] = self.bi.symptoms[2]
+			self.resultID[29] = self.bi.symptoms[3]
+			self.resultID[30] = self.bi.symptoms[4]
+			self.resultID[31] = self.bi.symptoms[5]
+			self.resultID[32] = self.bi.symptoms[6]
+			self.resultID[33] = self.bi.history[0]
+			self.resultID[34] = self.bi.history[1]
+			self.resultID[35] = self.bi.history[2]
+			self.resultID[36] = self.bi.diabetic == 0
+			self.resultID[37] = self.bi.diabetic == 1
+			self.resultID[38] = self.resultID[21] or self.resultID[22] or self.resultID[23] or self.resultID[24] or self.resultID[25]
+			self.resultID[39] = not self.resultID[39]
+			for i in vars(self.bi):
+				print("'"+i+"': " + str(getattr(self.bi, i)))
+			for i in range(len(self.resultID)):
+				print(str(i)+": " + str(self.resultID[i]))
 	
 	def screen_eval(self):
 		imgui.text('For general guidelines on cancer prevention, see this website.')
