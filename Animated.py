@@ -19,7 +19,7 @@ class Animation():
 		for i in range(pn):
 			p=os.path.join(path,str(i+1)+".png")
 			#if not os.path.isdir(p):
-			print(p)
+			#print(p)
 			im=cv.imread(p,flags=cv.IMREAD_UNCHANGED)
 			#im=im[800:800+1250,683:680+1250]
 			#cv.imshow("asd",im)
@@ -53,8 +53,8 @@ def showProgresbar(n,sx=200,sy=20):
 	#print(imgui.core.get_item_rect_max())
 	#print(imgui.core.get_item_rect_min())
 	draw_list = imgui.get_window_draw_list()
-	draw_list.add_rect_filled(bx,by, rx,ry, imgui.get_color_u32_rgba(0.2,0.2,0.2,1))
-	draw_list.add_rect_filled(bx,by, nx,ry, imgui.get_color_u32_rgba(0.1,1,0.1,1))
+	draw_list.add_rect_filled(bx,by, rx,ry, imgui.get_color_u32_rgba(0.0392,   0.7058, 	  0.8666,1))
+	draw_list.add_rect_filled(bx,by, nx,ry, imgui.get_color_u32_rgba(0.1294	, 0.3333	, 0.8039,1))
 	#print(nx)
 
 
