@@ -156,7 +156,7 @@ class App_window(Gui_Window):
 			self.screen_eval()
 		elif self.cur_tab == "Interesting and helpful facts":
 			self.screen_furtherinfo()
-		elif self.cur_tab == "calendar":
+		elif self.cur_tab == "Calendar":
 			self.screen_calendar()
 
 
