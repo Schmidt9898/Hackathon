@@ -73,7 +73,7 @@ class App_window(Gui_Window):
 		self.plot_text= mat_2_tex(img)
 		#####################################
 		self.n=0
-		self.nc=0.001
+		self.nc=0.05
 		# Radio test
 		self.radio_selected = 0
 		# User's name
@@ -87,8 +87,20 @@ class App_window(Gui_Window):
 
 
 		self.questions=questions.get_questions()
-		self.basic_info = questions.BasicInfo()
-
+		self.bi = questions.BasicInfo()
+		self.resultID = [False]*39;
+		self.evalonce = True
+	
+	def updateResultID(self):
+		if self.evalonce:
+			self.resultID[0] = self.bi.weight/(self.bi.height*self.bi.height) <= 18.5
+			self.resultID[1] = (self.bi.weight/(self.bi.height*self.bi.height) > 18.5) and (self.bi.weight/(self.bi.height*self.bi.height) <= 24.9)
+			self.resultID[2] = (self.bi.weight/(self.bi.height*self.bi.height) > 18.5) and (self.bi.weight/(self.bi.height*self.bi.height) <= 24.9)
+			self.resultID[3] = (self.bi.weight/(self.bi.height*self.bi.height) > 24.9) and (self.bi.weight/(self.bi.height*self.bi.height) <= 29.9)
+			self.resultID[4] = (self.bi.weight/(self.bi.height*self.bi.height) > 29.9) and (self.bi.weight/(self.bi.height*self.bi.height) <= 34.9)
+			self.resultID[5] = self.bi.weight/(self.bi.height*self.bi.height) > 34.9
+			self.resultID[6] = bool(self.bi.history)
+			print(self.resultID)
 
 	def context(self):
 		self.fps+=1
@@ -96,7 +108,8 @@ class App_window(Gui_Window):
 			print(self.fps)
 			self.fps_time=time.time()+1
 			self.fps=0.0
-
+		if self.cur_tab != "eval":
+			self.evalonce = True
 
 
 		imgui.push_font(self.new_font)
@@ -146,6 +159,8 @@ class App_window(Gui_Window):
 		elif self.cur_tab == "Main menu":
 			self.screen_main()
 		elif self.cur_tab == "eval":
+			self.updateResultID()
+			self.evalonce = False
 			self.screen_eval()
 		elif self.cur_tab == "furtherinfo":
 			self.screen_furtherinfo()
@@ -209,12 +224,10 @@ class App_window(Gui_Window):
 					if not q.ischeckbox:
 						if imgui.radio_button(c, q.value == i):
 							q.value = i
-							setattr(self.basic_info, q.target, q.value)
+							setattr(self.bi, q.target, q.value)
 					else:
 						_, q.value[i] = imgui.checkbox(c, q.value[i])
-						self.basic_info.symptoms[i] = q.value[i]
-						#q.value[i] = not q.value[i]
-						#setattr(self.basic_info, q.target[i], q.value[i])
+						self.bi.symptoms[i] = q.value[i]
 					i += 1
 			elif type(q.value) is int:
 				#imgui.text("Give me int")
@@ -279,62 +292,63 @@ class App_window(Gui_Window):
 		if imgui.button('Quit application', imgui.get_window_width() * 0.60, 50):
 			quit()
 		imgui.next_column()
-
+	
 	def screen_eval(self):
-		# Placeholder resultID list
-		resultID = [True]*39;
-
 		imgui.text('For general guidelines on cancer prevention, see this website.')
 		if imgui.button('cancer.org'):
 			webbrowser.open('https://www.cancer.org/healthy/find-cancer-early/screening-recommendations-by-age.html')
 
-		if resultID[26] or resultID[32]:
-			imgui.text('\nOne of your symptoms may be reason for concern.')
+		# Fatigue
+		if self.resultID[26] or self.resultID[32]:
+			imgui.text('\nOne of your symptoms (fatigue) may be reason for concern.')
 			imgui.text('Make an appointment with a doctor as soon as possible.')
 			if imgui.button('maps.google.com'):
 				webbrowser.open('https://www.google.com/maps/search/doctor/')
 
-		if resultID[30] or resultID[31]:
-			imgui.text('\nOne of your symptoms is cause for major concern.')
+		# Bleeding
+		if self.resultID[30] or self.resultID[31]:
+			imgui.text('\nOne of your symptoms (bleeding) is cause for major concern.')
 			imgui.text('Make an appointment with a doctor immediately!')
 			if imgui.button('maps.google.com##'):
 				webbrowser.open('https://www.google.com/maps/search/doctor/')
 
-		if resultID[27] or resultID[28]:
-			imgui.text('\nOne of your symptoms indicates the possibility of melanoma.')
+		# Skin disease
+		if self.resultID[27] or self.resultID[28]:
+			imgui.text('\nOne of your symptoms (skin disease) indicates the possibility of melanoma.')
 			imgui.text('Make an appointment with a doctor as soon as possible.')
 			if imgui.button('maps.google.com##1'):
 				webbrowser.open('https://www.google.com/maps/search/doctor/')
 
-		if resultID[29]:
+		# Cough
+		if self.resultID[29]:
 			imgui.text('\nA persisting cough may be cause for concern.')
 			imgui.text('If you find it unusual, make an appointment with a doctor.')
 			if imgui.button('maps.google.com##2'):
 				webbrowser.open('https://www.google.com/maps/search/doctor/')
 
-		if resultID[0]:
+		if self.resultID[0]:
 			imgui.text('\nYou should consider putting on some weight! Check out this website for advice.')
 			if imgui.button('nhs.uk'):
 				webbrowser.open('https://www.nhs.uk/live-well/healthy-weight/managing-your-weight/advice-for-underweight-adults/')
 
-		if resultID[2]:
+		if self.resultID[2]:
 			imgui.text('\nYour weight is above optimal. Check out this website for advice.')
 			if imgui.button('nhs.uk##'):
 				webbrowser.open('https://www.nhs.uk/conditions/obesity/treatment/')
 
-		if resultID[3] or resultID[4] or resultID[5]:
+		if self.resultID[3] or self.resultID[4] or self.resultID[5]:
 			imgui.text('\nYou are considered obese. You should start working on dropping some pounds!')
 			imgui.text('Check out this website for advice.')
 			if imgui.button('nhs.uk##1'):
 				webbrowser.open('https://www.nhs.uk/conditions/obesity/treatment/')
 
-		if resultID[8]:
+		if self.resultID[8]:
 			imgui.text('\nModerate consumption of alcohol is linked with increased cancer risk.')
 			imgui.text('See this site for further information.')
 			if imgui.button('cancer.gov##'):
 				webbrowser.open('https://www.cancer.gov/about-cancer/causes-prevention/risk/alcohol/alcohol-fact-sheet')
 
-		if resultID[9]:
+		if self.resultID[9]:
 			imgui.text('\nModerate consumption of alcohol is linked with increased cancer risk.')
 			imgui.text('See this site for further information.')
 			if imgui.button('cancer.gov##1'):
@@ -343,7 +357,7 @@ class App_window(Gui_Window):
 			if imgui.button('nhs.uk##2'):
 				webbrowser.open('https://www.nhs.uk/conditions/alcohol-misuse/treatment/')
 
-		if resultID[11]:
+		if self.resultID[11]:
 			imgui.text('\nEven low intensity smoking is associated with increased cancer risk.')
 			imgui.text('See this website.')
 			if imgui.button('nhs.uk##3'):
@@ -352,7 +366,7 @@ class App_window(Gui_Window):
 			if imgui.button('nhs.uk##4'):
 				webbrowser.open('https://www.nhs.uk/better-health/quit-smoking/')
 
-		if resultID[11] and resultID[35]:
+		if self.resultID[11] and self.resultID[35]:
 			imgui.text('\nEven low intensity smoking is associated with increased cancer risk.')
 			imgui.text('See this website.')
 			if imgui.button('nhs.uk##5'):
@@ -363,25 +377,25 @@ class App_window(Gui_Window):
 			imgui.text('Beware! According to your or your family\'s medical history,')
 			imgui.text('you are at an increased risk of lung cancer. Smoking does not help!')
 
-		if resultID[15]:
+		if self.resultID[15]:
 			imgui.text('\nYour blood sugar levels are outside optimal parameters.')
 			imgui.text('If this has been going on for a while, make an appointment with a doctor.')
 			if imgui.button('maps.google.com##3'):
 				webbrowser.open('https://www.google.com/maps/search/doctor/')
 
-		if resultID[17]:
+		if self.resultID[17]:
 			imgui.text('\nYour blood pressure is slightly above optimal.')
 			imgui.text('Consider taking steps to reduce it. Here\'s some advice. ')
 			if imgui.button('nhs.uk##7'):
 				webbrowser.open('https://www.nhs.uk/conditions/high-blood-pressure-hypertension/prevention/')
 
-		if resultID[18] or resultID[19]:
+		if self.resultID[18] or self.resultID[19]:
 			imgui.text('\nYour blood pressure indicates hypertension.')
 			imgui.text('You should take steps to reduce it. Here\'s some advice.')
 			if imgui.button('nhs.uk##8'):
 				webbrowser.open('https://www.nhs.uk/conditions/high-blood-pressure-hypertension/prevention/')
 
-		if resultID[38]:
+		if self.resultID[38]:
 			imgui.text('\nYou should make an appointment with a doctor for a regular medical checkup.')
 			imgui.text('See this link for doctors nearby.')
 			if imgui.button('maps.google.com##4'):
