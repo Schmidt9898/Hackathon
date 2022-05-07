@@ -4,7 +4,7 @@ import imgui
 import matplotlib.pyplot as plt
 from Animated import *
 import webbrowser
-from questions import get_questions
+import questions
 
 from Data_example import Data_obj # remove this
 
@@ -14,7 +14,7 @@ class App_window(Gui_Window):
 	def __init__(self,w=640,h=480,title="Life is good, but can be better."):
 		super(App_window, self).__init__(w,h,title)
 		
-		self.tabs=["qa","plot","progresbar","radioweb","anim","Main menu"]
+		self.tabs=["qa","plot","progresbar","radioweb","anim","Main menu","eval","furtherinfo"]
 		#self.cur_tab=self.tabs[0] if len(self.tabs)>0 else None
 		self.cur_tab="Main menu"
 		self.fps=0
@@ -68,8 +68,8 @@ class App_window(Gui_Window):
 			f.close()
 
 
-		self.quastions=get_questions()
-		
+		self.questions=questions.get_questions()
+		self.basic_info = questions.BasicInfo()
 
 
 	def context(self):
@@ -127,7 +127,10 @@ class App_window(Gui_Window):
 			imgui.text("tab d")
 		elif self.cur_tab == "Main menu":
 			self.screen_main()
-
+		elif self.cur_tab == "eval":
+			self.screen_eval()
+		elif self.cur_tab == "furtherinfo":
+			self.screen_furtherinfo()
 
 
 
@@ -174,33 +177,49 @@ class App_window(Gui_Window):
 		imgui.image(self.plot_text[0], self.plot_text[1], self.plot_text[2])
 
 	def sceen_qa(self):
-
-		for q in self.quastions:
-			if q.iscombo:
+		for q in self.questions:
+			imgui.text(q.label)
+			if len(q.combochoices):
 				#clicked, current = imgui.combo(q.label, q.value if q.value != None else 0, q.combochoices)
 				#if clicked:
 				#	q.value=current
-				q.value=q.value if q.value != None else 0
-				i=0
+				i = 0
+				imgui.text("Select an item from the list:")
 				for c in q.combochoices:
-					if imgui.radio_button(c+"##"+q.label,q.value==i):
-						q.value=i
-					i+=1
-
-
-
+					if not q.ischeckbox:
+						if imgui.radio_button(c, q.value == i):
+							q.value = i
+							setattr(self.basic_info, q.target, q.value)
+					else:
+						_, q.value[i] = imgui.checkbox(c, q.value[i])
+						self.basic_info.symptoms[i] = q.value[i]
+						#q.value[i] = not q.value[i]
+						#setattr(self.basic_info, q.target[i], q.value[i])
+					i += 1
 			elif type(q.value) is int:
-				imgui.text("Give me int")
+				#imgui.text("Give me int")
 				changed, int_val = imgui.input_int(q.label, q.value,flags=0)
-				if changed:
-					q.value=int_val
+				if q.value < q.min:
+					q.value = q.min
+					int_val = q.min
+				elif q.value > q.max:
+					q.value = q.max
+					int_val = q.max
+				else:
+					q.value = int_val
 			elif type(q.value) is float:
-				imgui.text("Give me float")
+				#imgui.text("Give me float")
 				changed, float_val = imgui.input_float(q.label, q.value)
-				if changed:
-					q.value=float_val
+				if q.value < q.min:
+					q.value = q.min
+					float_val = q.min
+				elif q.value > q.max:
+					q.value = q.max
+					float_val = q.max
+				else:
+					q.value = float_val
 			elif type(q.value) is str:
-				imgui.text("Give me string")
+				#imgui.text("Give me string")
 				changed, text_val = imgui.input_text(q.label,q.value,256)
 				if changed:
 					q.value=text_val
@@ -211,7 +230,6 @@ class App_window(Gui_Window):
 					q.value=(val)
 			imgui.separator()
 
-#
 #		for k,v in self.data.__dict__.items():
 #			if type(v) is int:
 #				imgui.text("Give me int")
@@ -232,7 +250,7 @@ class App_window(Gui_Window):
 		imgui.set_column_width(1, imgui.get_window_width() * 0.60)
 		imgui.set_column_width(2, imgui.get_window_width() * 0.20)
 		imgui.next_column()
-		imgui.text(' '*(20-len(self.username)) + 'Welcome ' + self.username + '!' + ' '*(20-len(self.username)))
+		imgui.text(' '*(int(24*imgui.get_window_width()/640-len(self.username)*1.5)) + 'Welcome ' + self.username + '!')
 		imgui.text('')
 		imgui.button('Start questionnaire', imgui.get_window_width() * 0.60, 75)
 		imgui.text('')
@@ -241,6 +259,127 @@ class App_window(Gui_Window):
 		if imgui.button('Quit application', imgui.get_window_width() * 0.60, 50):
 			quit()
 		imgui.next_column()
+
+	def screen_eval(self):
+		# Placeholder resultID list
+		resultID = [True]*39;
+
+		imgui.text('For general guidelines on cancer prevention, see this website.')
+		if imgui.button('cancer.org'):
+			webbrowser.open('https://www.cancer.org/healthy/find-cancer-early/screening-recommendations-by-age.html')
+
+		if resultID[26] or resultID[32]:
+			imgui.text('\nOne of your symptoms may be reason for concern.')
+			imgui.text('Make an appointment with a doctor as soon as possible.')
+			if imgui.button('maps.google.com'):
+				webbrowser.open('https://www.google.com/maps/search/doctor/')
+
+		if resultID[30] or resultID[31]:
+			imgui.text('\nOne of your symptoms is cause for major concern.')
+			imgui.text('Make an appointment with a doctor immediately!')
+			if imgui.button('maps.google.com##'):
+				webbrowser.open('https://www.google.com/maps/search/doctor/')
+
+		if resultID[27] or resultID[28]:
+			imgui.text('\nOne of your symptoms indicates the possibility of melanoma.')
+			imgui.text('Make an appointment with a doctor as soon as possible.')
+			if imgui.button('maps.google.com##1'):
+				webbrowser.open('https://www.google.com/maps/search/doctor/')
+
+		if resultID[29]:
+			imgui.text('\nA persisting cough may be cause for concern.')
+			imgui.text('If you find it unusual, make an appointment with a doctor.')
+			if imgui.button('maps.google.com##2'):
+				webbrowser.open('https://www.google.com/maps/search/doctor/')
+
+		if resultID[0]:
+			imgui.text('\nYou should consider putting on some weight! Check out this website for advice.')
+			if imgui.button('nhs.uk'):
+				webbrowser.open('https://www.nhs.uk/live-well/healthy-weight/managing-your-weight/advice-for-underweight-adults/')
+
+		if resultID[2]:
+			imgui.text('\nYour weight is above optimal. Check out this website for advice.')
+			if imgui.button('nhs.uk##'):
+				webbrowser.open('https://www.nhs.uk/conditions/obesity/treatment/')
+
+		if resultID[3] or resultID[4] or resultID[5]:
+			imgui.text('\nYou are considered obese. You should start working on dropping some pounds!')
+			imgui.text('Check out this website for advice.')
+			if imgui.button('nhs.uk##1'):
+				webbrowser.open('https://www.nhs.uk/conditions/obesity/treatment/')
+
+		if resultID[8]:
+			imgui.text('\nModerate consumption of alcohol is linked with increased cancer risk.')
+			imgui.text('See this site for further information.')
+			if imgui.button('cancer.gov##'):
+				webbrowser.open('https://www.cancer.gov/about-cancer/causes-prevention/risk/alcohol/alcohol-fact-sheet')
+
+		if resultID[9]:
+			imgui.text('\nModerate consumption of alcohol is linked with increased cancer risk.')
+			imgui.text('See this site for further information.')
+			if imgui.button('cancer.gov##1'):
+				webbrowser.open('https://www.cancer.gov/about-cancer/causes-prevention/risk/alcohol/alcohol-fact-sheet')
+			imgui.text('Additionally, if you feel like you need help regarding alcohol, visit this site.')
+			if imgui.button('nhs.uk##2'):
+				webbrowser.open('https://www.nhs.uk/conditions/alcohol-misuse/treatment/')
+
+		if resultID[11]:
+			imgui.text('\nEven low intensity smoking is associated with increased cancer risk.')
+			imgui.text('See this website.')
+			if imgui.button('nhs.uk##3'):
+				webbrowser.open('https://www.nhs.uk/conditions/lung-cancer/causes/')
+			imgui.text('If you need help to quit smoking, here is another website.')
+			if imgui.button('nhs.uk##4'):
+				webbrowser.open('https://www.nhs.uk/better-health/quit-smoking/')
+
+		if resultID[11] and resultID[35]:
+			imgui.text('\nEven low intensity smoking is associated with increased cancer risk.')
+			imgui.text('See this website.')
+			if imgui.button('nhs.uk##5'):
+				webbrowser.open('https://www.nhs.uk/conditions/lung-cancer/causes/')
+			imgui.text('If you need help to quit smoking, here is another website.')
+			if imgui.button('nhs.uk##6'):
+				webbrowser.open('https://www.nhs.uk/better-health/quit-smoking/')
+			imgui.text('Beware! According to your or your family\'s medical history,')
+			imgui.text('you are at an increased risk of lung cancer. Smoking does not help!')
+
+		if resultID[15]:
+			imgui.text('\nYour blood sugar levels are outside optimal parameters.')
+			imgui.text('If this has been going on for a while, make an appointment with a doctor.')
+			if imgui.button('maps.google.com##3'):
+				webbrowser.open('https://www.google.com/maps/search/doctor/')
+
+		if resultID[17]:
+			imgui.text('\nYour blood pressure is slightly above optimal.')
+			imgui.text('Consider taking steps to reduce it. Here\'s some advice. ')
+			if imgui.button('nhs.uk##7'):
+				webbrowser.open('https://www.nhs.uk/conditions/high-blood-pressure-hypertension/prevention/')
+
+		if resultID[18] or resultID[19]:
+			imgui.text('\nYour blood pressure indicates hypertension.')
+			imgui.text('You should take steps to reduce it. Here\'s some advice.')
+			if imgui.button('nhs.uk##8'):
+				webbrowser.open('https://www.nhs.uk/conditions/high-blood-pressure-hypertension/prevention/')
+
+		if resultID[38]:
+			imgui.text('\nYou should make an appointment with a doctor for a regular medical checkup.')
+			imgui.text('See this link for doctors nearby.')
+			if imgui.button('maps.google.com##4'):
+				webbrowser.open('https://www.google.com/maps/search/doctor/')
+
+	def screen_furtherinfo(self):
+		imgui.text('Did you know?\n')
+		imgui.text('\n\"Low contents of omega-3 PUFAs in the mammary region')
+		imgui.text('seem to contribute to breast cancer multifocality,')
+		imgui.text('indicating that omega-3 PUFA supplementation')
+		imgui.text('is important for cancer management and prevention\"')
+		if imgui.button('PubMed'):
+			webbrowser.open('https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6566772/')
+
+		imgui.text('\nLow lean body mass acts as a poor')
+		imgui.text('prognostic factor for cancer patients, regardless of age')
+		if imgui.button('PubMed##1'):
+			webbrowser.open('https://pubmed.ncbi.nlm.nih.gov/22898746/')
 
 	def set_style(self):
 		pass
