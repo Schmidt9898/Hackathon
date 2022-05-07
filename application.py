@@ -173,6 +173,7 @@ class App_window(Gui_Window):
 				#clicked, current = imgui.combo(q.label, q.value if q.value != None else 0, q.combochoices)
 				#if clicked:
 				#	q.value=current
+				q.value=q.value if q.value != None else 0
 				i=0
 				for c in q.combochoices:
 					if imgui.radio_button(c,q.value==i):
@@ -230,7 +231,8 @@ class App_window(Gui_Window):
 		imgui.text('')
 		imgui.button('Change basic info', imgui.get_window_width() * 0.60, 50)
 		imgui.text('')
-		imgui.button('Quit application', imgui.get_window_width() * 0.60, 50)
+		if imgui.button('Quit application', imgui.get_window_width() * 0.60, 50):
+			quit()
 		imgui.next_column()
 
 	def set_style(self):
@@ -248,6 +250,7 @@ class App_window(Gui_Window):
 
 
 
+		imgui.push_style_var(imgui.STYLE_FRAME_ROUNDING, 10)
 		imgui.push_style_color(imgui.COLOR_TEXT, 0, 0.0, 0.0)
 		imgui.push_style_color(imgui.COLOR_WINDOW_BACKGROUND, 	0.4745	, 0.8549	, 0.9098)
 		imgui.push_style_color(imgui.COLOR_MENUBAR_BACKGROUND ,	0.1294	, 0.3333	, 0.8039)
@@ -257,6 +260,8 @@ class App_window(Gui_Window):
 	def pop_style(self):
 		pass
 		imgui.pop_style_color(6)
+		imgui.pop_style_var(1)
+
 
 
 
