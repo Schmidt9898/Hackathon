@@ -13,9 +13,9 @@ class App_window(Gui_Window):
 	def __init__(self,w=640,h=480,title="Life is good, but can be better."):
 		super(App_window, self).__init__(w,h,title)
 		
-		self.tabs=["input","plot","progresbar","radioweb","anim"]
+		self.tabs=["input","plot","progresbar","radioweb","anim","Main menu"]
 		#self.cur_tab=self.tabs[0] if len(self.tabs)>0 else None
-		self.cur_tab="b"
+		self.cur_tab="Main menu"
 		self.fps=0
 		self.fps_time=0
 		self.data=Data_obj()
@@ -118,6 +118,8 @@ class App_window(Gui_Window):
 				self.nc*=-1
 		elif self.cur_tab == "d":
 			imgui.text("tab d")
+		elif self.cur_tab == "Main menu":
+			self.screen_main()
 
 
 
@@ -188,6 +190,19 @@ class App_window(Gui_Window):
 
 		if imgui.button("ok"):
 			self.data.asd=100
+
+	def screen_main(self):
+		imgui.columns(3, border=False)
+		imgui.set_column_width(0, imgui.get_window_width() * 0.20)
+		imgui.set_column_width(1, imgui.get_window_width() * 0.60)
+		imgui.set_column_width(2, imgui.get_window_width() * 0.20)
+		imgui.next_column()
+		imgui.text('                  Main menu')
+		imgui.text('')
+		imgui.button('Start questionnaire', imgui.get_window_width() * 0.60)
+		imgui.button('Change basic info', imgui.get_window_width() * 0.60)
+		imgui.button('Quit application', imgui.get_window_width() * 0.60)
+		imgui.next_column()
 
 	def set_style(self):
 		pass
