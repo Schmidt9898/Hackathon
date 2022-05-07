@@ -4,6 +4,7 @@ import imgui
 import matplotlib.pyplot as plt
 from Animated import *
 import webbrowser
+import Json
 import questions
 
 from Data_example import Data_obj # remove this
@@ -14,9 +15,9 @@ class App_window(Gui_Window):
 	def __init__(self,w=1240,h=720,title="Cancer Prevention"):
 		super(App_window, self).__init__(w,h,title)
 		
-		self.tabs=["qa","plot","progresbar","radioweb","anim","Main menu","eval","furtherinfo","calendar"]
+		self.tabs=["qa","plot","progresbar","radioweb","anim","Main menu","eval","furtherinfo","calendar", "First login"]
 		#self.cur_tab=self.tabs[0] if len(self.tabs)>0 else None
-		self.cur_tab="Main menu"
+		#self.cur_tab="Main menu"
 		self.fps=0
 		self.fps_time=0
 		self.data=Data_obj()
@@ -77,24 +78,21 @@ class App_window(Gui_Window):
 		# Radio test
 		self.radio_selected = 0
 		# User's name
-		self.username = ''
-		if os.path.exists('username.txt'):
-			f = open('username.txt')
-			l = f.readline()
-			if l.split():
-				self.username = l[0:-1]
-			f.close()
-
-
 		self.questions=questions.get_questions()
-		self.bi = questions.BasicInfo()
+		self.bi = None
 		self.resultID = [False]*40;
 		self.evalonce = True
+		# Load user data
+		self.loadUserData()
+		if self.bi.uname:
+			self.cur_tab="Main menu"
+		else:
+			self.cur_tab="First login"
 
 	def context(self):
 		self.fps+=1
 		if self.fps_time<time.time():
-			print(self.fps)
+			#print(self.fps)
 			self.fps_time=time.time()+1
 			self.fps=0.0
 		if self.cur_tab != "eval":
@@ -155,6 +153,8 @@ class App_window(Gui_Window):
 			self.screen_furtherinfo()
 		elif self.cur_tab == "calendar":
 			self.screen_calendar()
+		elif self.cur_tab == "First login":
+			self.screen_firstlogin()
 
 
 
@@ -210,10 +210,15 @@ class App_window(Gui_Window):
 				i = 0
 				for c in q.combochoices:
 					if not q.ischeckbox:
+						q.value = getattr(self.bi, q.target)
 						if imgui.radio_button(c, q.value == i):
 							q.value = i
 							setattr(self.bi, q.target, q.value)
 					else:
+						if q.target == 'symptoms':
+							q.value[i] = self.bi.symptoms[i]
+						elif q.target == 'history':
+							q.value[i] = self.bi.history[i]
 						_, q.value[i] = imgui.checkbox(c, q.value[i])
 						# TODO
 						if q.target == 'symptoms':
@@ -222,41 +227,49 @@ class App_window(Gui_Window):
 							self.bi.history[i] = q.value[i]
 					i += 1
 			elif type(q.value) is int:
-				#imgui.text("Give me int")
-				changed, int_val = imgui.input_int(q.label, q.value,flags=0)
-				if q.value < q.min:
-					q.value = q.min
-					int_val = q.min
-				elif q.value > q.max:
-					q.value = q.max
-					int_val = q.max
-				else:
-					q.value = int_val
-				setattr(self.bi, q.target, q.value)
+				q.value = getattr(self.bi, q.target)
+				changed, int_val = imgui.input_int(q.label, q.value, flags=0)
+				if changed:
+					if q.value < q.min:
+						q.value = q.min
+						int_val = q.min
+					elif q.value > q.max:
+						q.value = q.max
+						int_val = q.max
+					else:
+						q.value = int_val
+					setattr(self.bi, q.target, q.value)
 			elif type(q.value) is float:
-				#imgui.text("Give me float")
+				q.value = getattr(self.bi, q.target)
 				changed, float_val = imgui.input_float(q.label, q.value)
-				if q.value < q.min:
-					q.value = q.min
-					float_val = q.min
-				elif q.value > q.max:
-					q.value = q.max
-					float_val = q.max
-				else:
-					q.value = float_val
-				setattr(self.bi, q.target, q.value)
+				if changed:
+					if q.value < q.min:
+						q.value = q.min
+						float_val = q.min
+					elif q.value > q.max:
+						q.value = q.max
+						float_val = q.max
+					else:
+						q.value = float_val
+					setattr(self.bi, q.target, q.value)
 			elif type(q.value) is str:
-				#imgui.text("Give me string")
-				changed, text_val = imgui.input_text(q.label,q.value,256)
+				q.value = getattr(self.bi, q.target)
+				changed, text_val = imgui.input_text(q.label, q.value, 30)
 				if changed:
 					q.value=text_val
+					setattr(self.bi, q.target, q.value)
 			elif type(q.value) is tuple:
 				# TODO hogy lehet ezt min-maxolni?
-				val=val1,val2=q.value
-				changed, val = imgui.input_float2(q.label, *val)
+				bsys = self.bi.bloodpressure[0]
+				bdia = self.bi.bloodpressure[1]
+				bprs = (bsys, bdia)
+				changed, val = imgui.input_float2(q.label, bsys, bdia)
 				if changed:
-					q.value=(val)
-				setattr(self.bi, q.target, q.value)
+					bsys = val[0]
+					bdia = val[1]
+					bprs = (bsys, bdia)
+					q.value=bprs
+					self.bi.bloodpressure = bprs
 			imgui.separator()
 
 #		for k,v in self.data.__dict__.items():
@@ -279,16 +292,51 @@ class App_window(Gui_Window):
 		imgui.set_column_width(1, imgui.get_window_width() * 0.60)
 		imgui.set_column_width(2, imgui.get_window_width() * 0.20)
 		imgui.next_column()
-		imgui.text(' '*(int(25*imgui.get_window_width()/640-len(self.username)*1.3)) + 'Welcome ' + self.username + '!')
+		imgui.text(' '*(int(25*imgui.get_window_width()/640-len(self.bi.uname)*1.3)) + 'Welcome ' + self.bi.uname + '!')
 		imgui.text('')
 		imgui.button('Start questionnaire', imgui.get_window_width() * 0.60, 75)
 		imgui.text('')
 		imgui.button('Change basic info', imgui.get_window_width() * 0.60, 50)
 		imgui.text('')
 		if imgui.button('Quit application', imgui.get_window_width() * 0.60, 50):
+			self.saveUserData()
 			quit()
 		imgui.next_column()
 	
+	def loadUserData(self):
+		if os.path.exists('userdata.json'):
+			results = Json.fromJSON('userdata.json', questions.BasicInfo)
+			if len(results) != 1:
+				print('Valami elromlott a user datával')
+				self.bi = questions.BasicInfo()
+			else:
+				print('User data betöltve')
+				self.bi = results[0]
+		else:
+			print('Új user data létrehozva')
+			self.bi = questions.BasicInfo() # Load default data
+	
+	def saveUserData(self):
+		Json.toJSON(self.bi, 'userdata.json')
+		if not os.path.exists('userdata.json'):
+			print('Nem sikerült user datát írni')
+
+	def screen_firstlogin(self):
+		# TODO : ide sok animációt kérek
+		imgui.columns(3, border=False)
+		imgui.set_column_width(0, imgui.get_window_width() * 0.20)
+		imgui.set_column_width(1, imgui.get_window_width() * 0.60)
+		imgui.set_column_width(2, imgui.get_window_width() * 0.20)
+		imgui.next_column()
+		imgui.text("Choose your username:")
+		changed, text_val = imgui.input_text("", self.bi.uname, 30)
+		if changed:
+			self.bi.uname = text_val.strip()
+		imgui.text("")
+		if imgui.button("Confirm"):
+			if self.bi.uname.strip():
+				self.cur_tab = "Main menu"
+		imgui.next_column()
 	
 	def updateResultID(self):
 		if self.evalonce:
@@ -532,7 +580,7 @@ class App_window(Gui_Window):
 
 
 if __name__ == "__main__":
-	tw= App_window()
+	tw=App_window()
 	tw.start_loop()
 	tw.terminate()
 	cv.destroyAllWindows()
