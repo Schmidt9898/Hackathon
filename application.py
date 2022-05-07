@@ -312,9 +312,9 @@ class App_window(Gui_Window):
 			self.resultID[7] = self.bi.alcohol == 0
 			self.resultID[8] = self.bi.alcohol == 1
 			self.resultID[9] = self.bi.alcohol == 2
-			self.resultID[10] = self.bi.smoking == 0
+			self.resultID[10] = self.bi.smoking == 2
 			self.resultID[11] = self.bi.smoking == 1
-			self.resultID[12] = self.bi.smoking == 2
+			self.resultID[12] = self.bi.smoking == 0
 			self.resultID[13] = (self.bi.diabetic == 0) and (self.bi.bloodsugar >= 4.4) and (self.bi.bloodsugar <= 6.1)
 			self.resultID[14] = (self.bi.diabetic == 1) and (self.bi.bloodsugar >= 5.0) and (self.bi.bloodsugar <= 7.2)
 			self.resultID[15] = not self.resultID[13] and not self.resultID[14]
