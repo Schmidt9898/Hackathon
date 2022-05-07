@@ -2,16 +2,17 @@ class Question():
     def __init__(self):
         self.label = ""
         self.value = ""
-        self.tooltip = 'pass'
+        self.tooltip = 'lambda : ""'
         self.isdone = ""
         self.iscombo = ""
         self.combochoices = ""
         self.state = ""
-        self.resultID = 'pass'
+        self.resultID = 'lambda : None'
+        self.extraargs=None
 
 
 
-if __name__ == "__main__":
+def get_questions():
 
     questions = []
 
@@ -25,9 +26,7 @@ if __name__ == "__main__":
     S1.combochoices = []
     S1.state = 1
     S1.resultID = 'lambda input, height: 0 if input/(height)^2 < 18.5 else 1 if input/(height)^2 >= 18.5 and input/(height)^2 < 25.0 else 2 if input/(height)^2 >= 25.0 and input/(height)^2 < 30.0 else 3 if input/(height)^2 >= 30.0 and input/(height)^2 < 40 else 5 if input/(height)^2 >= 40 else ""'
-
     questions.append(S1)
-
     S2 = Question()
 
     S2.label = "Have you or any of your family members had any of these cancers in the past?"
@@ -38,9 +37,7 @@ if __name__ == "__main__":
     S2.combochoices = ["Select an item from the list", "None", "Breast", "Melanoma", "Lung"]
     S2.state = 2
     S2.resultID = 'lambda input: 33 if input == "Breast" else 34 if input == "Melanoma" else 35 if input == "Lung" else -1'
-
     questions.append(S2)
-
     S3 = Question()
 
     S3.label = "How often do you consume alcohol?"
@@ -51,9 +48,7 @@ if __name__ == "__main__":
     S3.combochoices = ["Select an item from the list", "None", "Once per day or less", "Regular or heavier consumer"]
     S3.state = 3
     S3.resultID = 'lambda input: 7 if input == "None" else 8 if input == "Once per day or less" else 9 if input == "Regular or heavier consumer" else ""'
-
     questions.append(S3)
-
     S4 = Question()
 
     S4.label = "How would you describe yourself in terms of smoking habits?"
@@ -64,9 +59,7 @@ if __name__ == "__main__":
     S4.combochoices = ["Select an item from the list", "Does not smoke", "Passive smoker", "Active smoker"]
     S4.state = 4
     S4.resultID = 'lambda input: 12 if input == "Does not smoke" else 11 if input == "Active smoker" else 10 if input == "Passive smoker" else ""'
-
     questions.append(S4)
-
     S5 = Question()
 
     S5.label = "Blood sugar (mmol/L)"
@@ -77,9 +70,7 @@ if __name__ == "__main__":
     S5.combochoices = []
     S5.state = 5
     S5.resultID = 'lambda input, diabeticinput: 13 if input >= 4.4 and input <= 6.1 and diabeticinput==37 else 14 if input >= 5.0 and input <= 7.2 and diabeticinput==36 else 15'
-
     questions.append(S5)
-
     S6 = Question()
 
     S6.label = "Blood pressure (mmHg)"
@@ -90,9 +81,7 @@ if __name__ == "__main__":
     S6.combochoices = []
     S6.state = 6
     S6.resultID = 'lambda input: 16 if input[0] < 120 and input[1] < 80 else 17 if 120 <= input[0] < 130 and input[1] < 80 else 18 if 130 <= input[0] < 140 or 80 <= input[1] < 90 else 19 if input[0] >= 140 or input[1] >= 90 else ""'
-
     questions.append(S6)
-
     S7 = Question()
 
     S7.label = "How many months ago did you have your last checkup?"
@@ -103,33 +92,32 @@ if __name__ == "__main__":
     S7.combochoices = []
     S7.state = 7
     S7.resultID = 'lambda input 38 if input > 12 else 39'
-
     questions.append(S7)
-
     S8 = Question()
 
     S8.label = "Have you had any of these symptomps lately?"
     S8.value = None
-    S8.tooltip = 'pass'
+    S8.tooltip = 'lambda : ""'
     S8.isdone = 'lambda input: True if input != "Select an item from the list" or not None else False' # S8.value-t nézze
     S8.iscombo = True
     S8.combochoices = ["Select an item from the list", "Sudden weight loss", "Swelling, visible lumps", "Thickening of skin", "Persisting cough", "Coughing up blood", "Unusual bleeding", "Increased fatigue, even with a proper sleeping schedule"]
     S8.state = 8
     S8.resultID = 'lambda input: 26 if input == "Sudden weight loss" else 27 if input == "Swelling, visible lumps" else 28 if input == "Thickening of skin" else 29 if input == "Persisting cough" else 30 if input == "Coughing up blood" else 31 if input == "Unusual bleeding" else 32 if input == "Increased fatigue, even with a proper sleeping schedule" else ""'
-
     questions.append(S8)
 
-    from Json import*
-    toJSON(questions,"questions.json")
-    questions=[]
-    questions=fromJSON("questions.json",Question)
+    return questions
 
-
-
-    q = [x.resultID(x.value) for x in questions]
-    results = [False]*39
-
-    for i in range(len(q)):
-        print(q[i])
-        #results[int(q[i])] = True
+#   #from Json import*
+#   #toJSON(questions,"questions.json")
+#   #questions=[]
+#   #questions=fromJSON("questions.json",Question)
+#
+#
+#
+#   q = [x.resultID(x.value) for x in questions]
+#   results = [False]*39
+#
+#   for i in range(len(q)):
+#      print(q[i])
+#      #results[int(q[i])] = True
 
