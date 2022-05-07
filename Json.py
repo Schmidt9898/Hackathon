@@ -17,17 +17,23 @@ def toJSON(src, fname, mode='w'):
     contents = jsons.dumps(src, default=vars)
     fl = open(fname, mode)
     if mode != "r":
-        fl.write(contents)
+        fl.write(contents + '\n')
     fl.close()
 
+# Soronként egy objektum/dictionary
 def fromJSON(fname):
+    objects = []
     fl = open(fname, 'r')
-    contents = json.load(fl)
+    for l in fl:
+        content = json.loads(l)
+        objects.append(content)
     fl.close()
-    return contents
+    return objects
 
 if __name__ == "__main__":
     t = JSONTest()
-    toJSON(t, 'test.json')
+    print('Írás')
+    toJSON(t, 'test.json', 'a')
+    print('Olvasás')
     print(fromJSON('test.json'))
 
