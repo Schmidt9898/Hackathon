@@ -41,45 +41,53 @@ class Test_get_coin_methods(unittest.TestCase):
     def test_json_writesingle(self):
         obj = JSONTest()
         toJSON(obj, 'test.json', 'w')
-        self.assertTrue(os.path.exists("test.json"))
+        self.assertTrue(os.path.exists('test.json'))
+        os.remove('test.json')
+        self.assertFalse(os.path.exists('test.json'))
 
     def test_json_writelist(self):
         obj = JSONTest()
         toJSON([obj], 'test.json', 'w')
-        self.assertTrue(os.path.exists("test.json"))
+        self.assertTrue(os.path.exists('test.json'))
+        os.remove('test.json')
+        self.assertFalse(os.path.exists('test.json'))
 
     def test_json_readonce(self):
         obj = JSONTest()
         toJSON([obj, obj], 'test.json', 'w')
-        self.assertTrue(os.path.exists("test.json"))
-        result = fromJSON("test.json")
+        self.assertTrue(os.path.exists('test.json'))
+        result = fromJSON('test.json')
         for o in result:
             #for k,v in o.__dict__.items():
             for k,v in o.items():
                 self.assertEqual(getattr(obj, k), v)
+        os.remove('test.json')
+        self.assertFalse(os.path.exists('test.json'))
 
     def test_json_readappend(self):
         obj = JSONTest()
         fl = open('test.json', 'w')
         fl.close()
         toJSON(obj, 'test.json', 'a')
-        self.assertTrue(os.path.exists("test.json"))
+        self.assertTrue(os.path.exists('test.json'))
         toJSON([obj], 'test.json', 'a')
-        self.assertTrue(os.path.exists("test.json"))
+        self.assertTrue(os.path.exists('test.json'))
         toJSON([obj, obj], 'test.json', 'a')
-        self.assertTrue(os.path.exists("test.json"))
+        self.assertTrue(os.path.exists('test.json'))
 
-        result = fromJSON("test.json")
+        result = fromJSON('test.json')
         for o in result:
             #for k,v in o.__dict__.items():
             for k,v in o.items():
                 self.assertEqual(getattr(obj, k), v)
+        os.remove('test.json')
+        self.assertFalse(os.path.exists('test.json'))
 
     def test_json_readmultiple(self):
         obj1 = JSONTest()
         obj2 = JSONTest(4, 2.2, 'bar', ['n', 4, 5.6], True, False)
         toJSON([obj1, obj2], 'test.json', 'w')
-        self.assertTrue(os.path.exists("test.json"))
+        self.assertTrue(os.path.exists('test.json'))
 
         result = fromJSON("test.json")
         self.assertEqual(len(result), 2)
@@ -87,6 +95,8 @@ class Test_get_coin_methods(unittest.TestCase):
             self.assertEqual(getattr(obj1, k), v)
         for k,v in result[1].items():
             self.assertEqual(getattr(obj2, k), v)
+        os.remove('test.json')
+        self.assertFalse(os.path.exists('test.json'))
 
 # Tesztelés
 if __name__ == "__main__":
