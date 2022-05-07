@@ -1,3 +1,4 @@
+from io import FileIO
 import time
 from Gui import *
 import imgui
@@ -5,6 +6,7 @@ import matplotlib.pyplot as plt
 from Animated import *
 import webbrowser
 import questions
+from PIL import Image
 
 from Data_example import Data_obj # remove this
 
@@ -20,10 +22,12 @@ class App_window(Gui_Window):
 		self.fps=0
 		self.fps_time=0
 		self.data=Data_obj()
-		#icon=cv.imread("./icon.png")
-		#print(icon.shape)
-		#icon=(icon.data,icon.shape[0],icon.shape[1])
-		#glfw.set_window_icon(self.window,1,icon)
+		icon=cv.imread("./icon.png")
+		print(icon.shape)
+		#a = np.asarray( icon[:,:] ).astype(int)
+		#icon=reinterpret.(NTuple{4,UInt8},icon)
+		im_pil = Image.fromarray(icon)
+		glfw.set_window_icon(self.window,1,im_pil)
 		
 
 		io = imgui.get_io()												 #font
