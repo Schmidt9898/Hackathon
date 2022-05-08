@@ -145,7 +145,8 @@ class App_window(Gui_Window):
 			self.sceen_radio()
 			self.sceen_url()
 		elif self.cur_tab == "anim":
-			self.anim.draw(self.n)
+			pass
+			#self.anim.draw(self.n)
 			#imgui.text("anim")
 
 		elif self.cur_tab == "d":
@@ -174,11 +175,12 @@ class App_window(Gui_Window):
 		self.n+=self.nc
 		if self.n > 1 or self.n<0:
 			self.nc*=-1
-		imgui.set_next_window_position(io.display_size.x,40,pivot_x=1,pivot_y=0)
-		imgui.set_next_window_size(200,200)
-		imgui.begin("anim",flags=imgui.WINDOW_NO_TITLE_BAR | imgui.WINDOW_NO_RESIZE | imgui.WINDOW_NO_MOVE | imgui.WINDOW_NO_SCROLLBAR | imgui.WINDOW_NO_SCROLL_WITH_MOUSE )
-		self.anim.draw(self.n)
-		imgui.end()
+		
+		#imgui.set_next_window_position(io.display_size.x,40,pivot_x=1,pivot_y=0)
+		#imgui.set_next_window_size(200,200)
+		#imgui.begin("anim",flags=imgui.WINDOW_NO_TITLE_BAR | imgui.WINDOW_NO_RESIZE | imgui.WINDOW_NO_MOVE | imgui.WINDOW_NO_SCROLLBAR | imgui.WINDOW_NO_SCROLL_WITH_MOUSE )
+		#self.anim.draw(self.n)
+		#imgui.end()
 
 
 		imgui.pop_font()
@@ -347,6 +349,7 @@ class App_window(Gui_Window):
 		if imgui.button("Confirm"):
 			if self.bi.uname.strip():
 				self.cur_tab = "Main menu"
+		self.anim.draw(self.n)
 		imgui.next_column()
 	
 	def updateResultID(self):
