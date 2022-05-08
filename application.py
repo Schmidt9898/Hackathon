@@ -209,81 +209,82 @@ class App_window(Gui_Window):
 
 	def sceen_qa(self):
 		for q in self.questions:
-			imgui.text(q.label)
-			if len(q.combochoices):
-				#clicked, current = imgui.combo(q.label, q.value if q.value != None else 0, q.combochoices)
-				#if clicked:
-				#	q.value=current
-				i = 0
-				for c in q.combochoices:
-					if not q.ischeckbox:
-						q.value = getattr(self.bi, q.target)
-						if imgui.radio_button(c, q.value == i):
-							q.value = i
-							setattr(self.bi, q.target, q.value)
+			if (q.boomer == 1) or (self.bi.advanced == 1):
+				imgui.text(q.label)
+				if len(q.combochoices):
+					#clicked, current = imgui.combo(q.label, q.value if q.value != None else 0, q.combochoices)
+					#if clicked:
+					#	q.value=current
+					i = 0
+					for c in q.combochoices:
+						if not q.ischeckbox:
+							q.value = getattr(self.bi, q.target)
+							if imgui.radio_button(c, q.value == i):
+								q.value = i
+								setattr(self.bi, q.target, q.value)
+						else:
+							if q.target == 'symptoms':
+								q.value[i] = self.bi.symptoms[i]
+							elif q.target == 'history':
+								q.value[i] = self.bi.history[i]
+							_, q.value[i] = imgui.checkbox(c, q.value[i])
+							# TODO
+							if q.target == 'symptoms':
+								self.bi.symptoms[i] = q.value[i]
+							elif q.target == 'history':
+								self.bi.history[i] = q.value[i]
+						i += 1
+				elif type(q.value) is int:
+					q.value = getattr(self.bi, q.target)
+					changed, int_val = imgui.input_int(q.label, q.value, flags=0)
+					if q.value < q.min:
+						q.value = q.min
+						int_val = q.min
+					elif q.value > q.max:
+						q.value = q.max
+						int_val = q.max
 					else:
-						if q.target == 'symptoms':
-							q.value[i] = self.bi.symptoms[i]
-						elif q.target == 'history':
-							q.value[i] = self.bi.history[i]
-						_, q.value[i] = imgui.checkbox(c, q.value[i])
-						# TODO
-						if q.target == 'symptoms':
-							self.bi.symptoms[i] = q.value[i]
-						elif q.target == 'history':
-							self.bi.history[i] = q.value[i]
-					i += 1
-			elif type(q.value) is int:
-				q.value = getattr(self.bi, q.target)
-				changed, int_val = imgui.input_int(q.label, q.value, flags=0)
-				if q.value < q.min:
-					q.value = q.min
-					int_val = q.min
-				elif q.value > q.max:
-					q.value = q.max
-					int_val = q.max
-				else:
-					q.value = int_val
-				setattr(self.bi, q.target, q.value)
-			elif type(q.value) is float:
-				q.value = getattr(self.bi, q.target)
-				changed, float_val = imgui.input_float(q.label, q.value)
-				if q.value < q.min:
-					q.value = q.min
-					float_val = q.min
-				elif q.value > q.max:
-					q.value = q.max
-					float_val = q.max
-				else:
-					q.value = float_val
-				setattr(self.bi, q.target, q.value)
-			elif type(q.value) is str:
-				q.value = getattr(self.bi, q.target)
-				changed, text_val = imgui.input_text(q.label, q.value, 30)
-				q.value=text_val
-				setattr(self.bi, q.target, q.value)
-			elif type(q.value) is tuple:
-				# TODO hogy lehet ezt min-maxolni?
-				bsys = self.bi.bloodpressure[0]
-				bdia = self.bi.bloodpressure[1]
-				bprs = (bsys, bdia)
-				changed, val = imgui.input_float2(q.label, bsys, bdia)
-				if bsys < q.min:
-					bsys = q.min
-				elif bsys > q.max:
-					bsys = q.max
-				else:
-					bsys = val[0]
-				if bdia < q.min:
-					bdia = q.min
-				elif bdia > q.max:
-					bdia = q.max
-				else:
-					bdia = val[1]
-				bprs = (bsys, bdia)
-				q.value=bprs
-				self.bi.bloodpressure = bprs
-			imgui.separator()
+						q.value = int_val
+					setattr(self.bi, q.target, q.value)
+				elif type(q.value) is float:
+					q.value = getattr(self.bi, q.target)
+					changed, float_val = imgui.input_float(q.label, q.value)
+					if q.value < q.min:
+						q.value = q.min
+						float_val = q.min
+					elif q.value > q.max:
+						q.value = q.max
+						float_val = q.max
+					else:
+						q.value = float_val
+					setattr(self.bi, q.target, q.value)
+				elif type(q.value) is str:
+					q.value = getattr(self.bi, q.target)
+					changed, text_val = imgui.input_text(q.label, q.value, 30)
+					q.value=text_val
+					setattr(self.bi, q.target, q.value)
+				elif type(q.value) is tuple:
+					# TODO hogy lehet ezt min-maxolni?
+					bsys = self.bi.bloodpressure[0]
+					bdia = self.bi.bloodpressure[1]
+					bprs = (bsys, bdia)
+					changed, val = imgui.input_float2(q.label, bsys, bdia)
+					if bsys < q.min:
+						bsys = q.min
+					elif bsys > q.max:
+						bsys = q.max
+					else:
+						bsys = val[0]
+					if bdia < q.min:
+						bdia = q.min
+					elif bdia > q.max:
+						bdia = q.max
+					else:
+						bdia = val[1]
+					bprs = (bsys, bdia)
+					q.value=bprs
+					self.bi.bloodpressure = bprs
+				imgui.separator()
 
 #		for k,v in self.data.__dict__.items():
 #			if type(v) is int:
