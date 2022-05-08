@@ -261,7 +261,7 @@ class App_window(Gui_Window):
 				elif type(q.value) is str:
 					q.value = getattr(self.bi, q.target)
 					changed, text_val = imgui.input_text(q.label, q.value, 30)
-					q.value=text_val
+					q.value = text_val
 					setattr(self.bi, q.target, q.value)
 				elif type(q.value) is tuple:
 					# TODO hogy lehet ezt min-maxolni?
@@ -285,6 +285,8 @@ class App_window(Gui_Window):
 					q.value=bprs
 					self.bi.bloodpressure = bprs
 				imgui.separator()
+		if imgui.button("Confirm", 200, 50):
+			self.cur_tab = "Main menu"
 
 #		for k,v in self.data.__dict__.items():
 #			if type(v) is int:
@@ -347,9 +349,9 @@ class App_window(Gui_Window):
 		imgui.set_column_width(2, imgui.get_window_width() * 0.20)
 		imgui.next_column()
 		imgui.text("Choose your username:")
-		changed, text_val = imgui.input_text("", self.bi.uname, 30)
+		changed, text_val = imgui.input_text(' ', self.bi.uname, 30)
 		if changed:
-			self.bi.uname = text_val.strip()
+			self.bi.uname = text_val
 		imgui.text("")
 		imgui.text("Advanced mode: ")
 		imgui.same_line()
