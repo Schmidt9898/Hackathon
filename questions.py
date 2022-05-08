@@ -16,6 +16,7 @@ class Question():
 class BasicInfo():
 	def __init__(self):
 		self.uname = ''
+		self.advanced = 0
 		self.gender = 0
 		self.age = 18
 		self.height = 180.0
@@ -58,6 +59,15 @@ def get_questions():
     SP.min = 18
     SP.max = 99
     questions.append(SP)
+
+    SA = Question()
+    SA.label = "Advanced mode"
+    SA.value = 0
+    SA.tooltip = 'lambda : "hm"'
+    SA.combochoices = ["Disabled", "Enabled"]
+    SA.resultID = 'lambda : ""'
+    SA.target = 'advanced'
+    questions.append(SA)
 
     S0 = Question()
     S0.label = "Height (cm)"
