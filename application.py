@@ -303,6 +303,8 @@ class App_window(Gui_Window):
 #			self.data.asd=100
 
 	def screen_main(self):
+		if not self.bi.uname:
+			self.bi.uname = 'Stranger'
 		imgui.columns(3, border=False)
 		imgui.set_column_width(0, imgui.get_window_width() * 0.20)
 		imgui.set_column_width(1, imgui.get_window_width() * 0.60)
