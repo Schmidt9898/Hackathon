@@ -531,6 +531,9 @@ class App_window(Gui_Window):
 			if imgui.button('maps.google.com##4'):
 				webbrowser.open('https://www.google.com/maps/search/doctor/')
 
+		if not self.resultID[0] and not self.resultID[2] and not self.resultID[3] and not self.resultID[4] and not self.resultID[5] and not self.resultID[8] and not self.resultID[9] and not self.resultID[10] and not self.resultID[11] and not self.resultID[15] and not self.resultID[18] and not self.resultID[19] and not self.resultID[20] and not self.resultID[26] and not self.resultID[27] and not self.resultID[28] and not self.resultID[29] and not self.resultID[30] and not self.resultID[31] and not self.resultID[32] and not self.resultID[38]:
+			imgui.text('\nYou are in perfect health.')
+
 	def screen_furtherinfo(self):
 		imgui.text('Did you know?\n')
 		imgui.text('\n\"Low contents of omega-3 PUFAs in the mammary region')
