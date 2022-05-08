@@ -236,47 +236,53 @@ class App_window(Gui_Window):
 			elif type(q.value) is int:
 				q.value = getattr(self.bi, q.target)
 				changed, int_val = imgui.input_int(q.label, q.value, flags=0)
-				if changed:
-					if q.value < q.min:
-						q.value = q.min
-						int_val = q.min
-					elif q.value > q.max:
-						q.value = q.max
-						int_val = q.max
-					else:
-						q.value = int_val
-					setattr(self.bi, q.target, q.value)
+				if q.value < q.min:
+					q.value = q.min
+					int_val = q.min
+				elif q.value > q.max:
+					q.value = q.max
+					int_val = q.max
+				else:
+					q.value = int_val
+				setattr(self.bi, q.target, q.value)
 			elif type(q.value) is float:
 				q.value = getattr(self.bi, q.target)
 				changed, float_val = imgui.input_float(q.label, q.value)
-				if changed:
-					if q.value < q.min:
-						q.value = q.min
-						float_val = q.min
-					elif q.value > q.max:
-						q.value = q.max
-						float_val = q.max
-					else:
-						q.value = float_val
-					setattr(self.bi, q.target, q.value)
+				if q.value < q.min:
+					q.value = q.min
+					float_val = q.min
+				elif q.value > q.max:
+					q.value = q.max
+					float_val = q.max
+				else:
+					q.value = float_val
+				setattr(self.bi, q.target, q.value)
 			elif type(q.value) is str:
 				q.value = getattr(self.bi, q.target)
 				changed, text_val = imgui.input_text(q.label, q.value, 30)
-				if changed:
-					q.value=text_val
-					setattr(self.bi, q.target, q.value)
+				q.value=text_val
+				setattr(self.bi, q.target, q.value)
 			elif type(q.value) is tuple:
 				# TODO hogy lehet ezt min-maxolni?
 				bsys = self.bi.bloodpressure[0]
 				bdia = self.bi.bloodpressure[1]
 				bprs = (bsys, bdia)
 				changed, val = imgui.input_float2(q.label, bsys, bdia)
-				if changed:
+				if bsys < q.min:
+					bsys = q.min
+				elif bsys > q.max:
+					bsys = q.max
+				else:
 					bsys = val[0]
+				if bdia < q.min:
+					bdia = q.min
+				elif bdia > q.max:
+					bdia = q.max
+				else:
 					bdia = val[1]
-					bprs = (bsys, bdia)
-					q.value=bprs
-					self.bi.bloodpressure = bprs
+				bprs = (bsys, bdia)
+				q.value=bprs
+				self.bi.bloodpressure = bprs
 			imgui.separator()
 
 #		for k,v in self.data.__dict__.items():
@@ -343,6 +349,10 @@ class App_window(Gui_Window):
 		changed, text_val = imgui.input_text("", self.bi.uname, 30)
 		if changed:
 			self.bi.uname = text_val.strip()
+		imgui.text("")
+		imgui.text("Advanced mode: ")
+		imgui.same_line()
+		_, self.bi.advanced = imgui.checkbox("", self.bi.advanced)
 		imgui.text("")
 		if imgui.button("Confirm"):
 			if self.bi.uname.strip():
