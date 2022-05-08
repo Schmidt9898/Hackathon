@@ -347,10 +347,6 @@ class App_window(Gui_Window):
 		imgui.same_line()
 		_, self.bi.advanced = imgui.checkbox("", self.bi.advanced)
 		imgui.text("")
-		imgui.text("Advanced mode: ")
-		imgui.same_line()
-		_, self.bi.advanced = imgui.checkbox("", self.bi.advanced)
-		imgui.text("")
 		if imgui.button("Confirm"):
 			if self.bi.uname.strip():
 				self.cur_tab = "Main menu"
